@@ -5,6 +5,7 @@ import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { toast } from '../components/Toast'
 import { User, Phone, Mail, ChevronRight } from 'lucide-react'
+import { StepIndicator } from '../components/StepIndicator'
 
 export default function SignUp() {
   const navigate = useNavigate()
@@ -31,23 +32,7 @@ export default function SignUp() {
       <Header title={t('signup_title')} />
 
       <div className="flex-1 px-6 pt-5 overflow-y-auto">
-        {/* Step indicator */}
-        <div className="flex items-center gap-2 mb-5">
-          <div className="flex items-center gap-1.5">
-            <div className="w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">1</div>
-            <span className="text-xs font-medium text-primary">{t('profile_basic_info')}</span>
-          </div>
-          <div className="flex-1 h-px bg-border" />
-          <div className="flex items-center gap-1.5">
-            <div className="w-6 h-6 rounded-full bg-gray-200 text-text-light text-xs font-bold flex items-center justify-center">2</div>
-            <span className="text-xs text-text-light">{t('terms_title')}</span>
-          </div>
-          <div className="flex-1 h-px bg-border" />
-          <div className="flex items-center gap-1.5">
-            <div className="w-6 h-6 rounded-full bg-gray-200 text-text-light text-xs font-bold flex items-center justify-center">3</div>
-            <span className="text-xs text-text-light">PIN</span>
-          </div>
-        </div>
+        <StepIndicator current={1} />
 
         <h2 className="text-lg font-bold text-text-dark whitespace-pre-line">{t('signup_heading')}</h2>
         <p className="text-xs text-text-gray mt-1 mb-6">{t('signup_desc')}</p>

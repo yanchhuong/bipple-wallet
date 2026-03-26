@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { PinInput } from '../components/PinInput'
+import { StepIndicator } from '../components/StepIndicator'
 import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 
@@ -32,6 +33,9 @@ export default function PinSetup() {
   return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
       <Header title={t('pin_title')} />
+      <div className="px-6 pt-3">
+        <StepIndicator current={3} />
+      </div>
       <PinInput
         title={step === 'create' ? t('pin_enter') : t('pin_reenter')}
         subtitle={step === 'create' ? t('pin_used_for') : t('pin_reenter_desc')}

@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { Header } from '../components/Header'
 import { User, Globe, ShieldCheck, CreditCard } from 'lucide-react'
+import { StepIndicator } from '../components/StepIndicator'
 
 export default function UserTypeSelect() {
   const navigate = useNavigate()
@@ -28,7 +29,8 @@ export default function UserTypeSelect() {
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
       <Header title={t('usertype_title')} showBack={true} />
 
-      <div className="flex-1 px-6 pt-8">
+      <div className="flex-1 px-6 pt-5">
+        <StepIndicator current={4} />
         <h2 className="text-lg font-bold text-text-dark mb-1">{t('usertype_heading')}</h2>
         <p className="text-sm text-text-gray mb-8">{t('usertype_desc')}</p>
 
