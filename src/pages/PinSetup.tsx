@@ -27,18 +27,19 @@ export default function PinSetup() {
     } else {
       if (pin === firstPin) {
         setPin(pin)
-        if (isSignupFlow) {
-<<<<<<< Updated upstream
-          navigate('/user-type')
-        } else if (location.state?.from === 'settings') {
-=======
+        if (flow === 'signup') {
           navigate('/user-type', { replace: true })
-        } else {
->>>>>>> Stashed changes
+        } else if (flow === 'reset') {
           navigate(-1)
         } else if (location.state?.from === 'payment') {
           navigate('/payment-pin', { replace: true })
+        } else if (location.state?.from === 'settings') {
+          navigate(-1)
+        } else if (isSignupFlow) {
+          // Backward-compatible fallback: when pinSet is false and no explicit flow is provided
+          navigate('/user-type', { replace: true })
         } else {
+          // Default fallback to keep users in the app
           navigate('/home', { replace: true })
         }
       } else {

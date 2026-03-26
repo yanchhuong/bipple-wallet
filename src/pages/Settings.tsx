@@ -130,11 +130,7 @@ export default function Settings() {
             </div>
             <Toggle value={faceIdEnabled} onChange={(v) => { setFaceIdEnabled(v); toast(`${t('settings_faceid')}: ${v ? t('settings_on') : t('settings_off')}`) }} />
           </div>
-<<<<<<< Updated upstream
-          <button onClick={() => navigate('/pin-setup', { state: { from: 'settings' } })} className="w-full flex items-center gap-3 px-4 py-4 active:bg-gray-50">
-=======
           <button onClick={() => navigate('/pin-setup', { state: { flow: 'reset' } })} className="w-full flex items-center gap-3 px-4 py-4 active:bg-gray-50">
->>>>>>> Stashed changes
             <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center"><Lock size={18} className="text-text-gray" /></div>
             <div className="flex-1 text-left">
               <p className="text-sm font-medium text-text-dark">{t('settings_pin')}</p>
