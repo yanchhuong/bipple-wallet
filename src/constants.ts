@@ -1,4 +1,4 @@
-// Bipple Wallet - App Constants
+// Beple Wallet - App Constants
 // Extracted from spec v1.02 Common Rules
 
 // ATM

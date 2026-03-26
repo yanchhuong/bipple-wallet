@@ -17,7 +17,7 @@ function usePrefersReducedMotion() {
   return reduced
 }
 
-function BippleLogoMark({
+function BepleLogoMark({
   parallax,
   reducedMotion,
 }: {
@@ -188,11 +188,11 @@ export function LaunchScreen() {
       ))}
 
       <div className="flex flex-col items-center px-6 -mt-16">
-        <BippleLogoMark parallax={parallax} reducedMotion={reducedMotion} />
+        <BepleLogoMark parallax={parallax} reducedMotion={reducedMotion} />
 
         <div className="mt-6 text-center">
-          <h1 className="text-2xl font-bold text-primary tracking-tight">비플월렛</h1>
-          <p className="mt-1 text-xs font-semibold tracking-[0.2em] text-slate-400">BIPPLE WALLET</p>
+          <h1 className="text-2xl font-bold text-primary tracking-tight">베플월렛</h1>
+          <p className="mt-1 text-xs font-semibold tracking-[0.2em] text-slate-400">BEPLE WALLET</p>
         </div>
 
         <div

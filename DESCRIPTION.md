@@ -1,4 +1,4 @@
-# Bipple Wallet (비플월렛)
+# Beple Wallet (베플월렛)
 
 A hybrid payment wallet platform for both **domestic Korean users** and **foreign tourists** visiting South Korea. Charge, pay, and withdraw KRW through cryptocurrency exchanges and stablecoin integrations.
 
@@ -6,7 +6,7 @@ A hybrid payment wallet platform for both **domestic Korean users** and **foreig
 
 ## Overview
 
-Bipple Wallet bridges the gap between crypto assets and everyday KRW payments in South Korea. It provides a unified mobile interface where users can:
+Beple Wallet bridges the gap between crypto assets and everyday KRW payments in South Korea. It provides a unified mobile interface where users can:
 
 - **Charge** Bipple Money (KRW) from bank accounts, crypto exchanges (Korbit), or stablecoin platforms (Triple-A)
 - **Pay** merchants via QR code scanning
@@ -143,7 +143,7 @@ Language Select → Login/SignUp → Terms → PIN Setup → User Type Select
 
 ## Design Specification
 
-Based on **비플월렛 UX/UI 상세 설계서 v1.02** — 71-slide wireframe specification covering:
+Based on **베플월렛 UX/UI 상세 설계서 v1.02** — 71-slide wireframe specification covering:
 - Target & policy principles
 - Full user flow wireframes
 - State & error message catalog

@@ -32,7 +32,7 @@ const zh: Record<TranslationKeys, string> = {
   lang_zh_sub: '中文',
 
   // Login
-  login_title: 'Bipple钱包',
+  login_title: 'Beple钱包',
   login_subtitle: '开始使用',
   login_google: '使用Google继续',
   login_apple: '使用Apple继续',
@@ -49,7 +49,7 @@ const zh: Record<TranslationKeys, string> = {
 
   // Sign Up
   signup_title: '注册',
-  signup_heading: '欢迎来到\nBipple钱包',
+  signup_heading: '欢迎来到\nBeple钱包',
   signup_desc: '请输入基本信息以开始使用服务。',
   signup_fullname: '姓名',
   signup_fullname_placeholder: '张三',
@@ -67,7 +67,7 @@ const zh: Record<TranslationKeys, string> = {
 
   // Terms
   terms_title: '服务条款',
-  terms_heading: '请同意条款\n以使用Bipple钱包',
+  terms_heading: '请同意条款\n以使用Beple钱包',
   terms_desc: '为提供顺畅服务所需的条款。',
   terms_all: '全部同意',
   terms_required: '必选',
@@ -76,9 +76,9 @@ const zh: Record<TranslationKeys, string> = {
   terms_privacy_collect: '个人信息收集和使用同意',
   terms_marketing: '营销信息接收同意',
   terms_agree_continue: '同意并继续',
-  terms_service_content: '第一条（目的）本条款旨在规定Bipple Pay株式会社（以下称"公司"）提供的Bipple钱包服务使用相关的公司与会员之间的权利、义务及责任事项。',
+  terms_service_content: '第一条（目的）本条款旨在规定Bipple Pay株式会社（以下称"公司"）提供的Beple钱包服务使用相关的公司与会员之间的权利、义务及责任事项。',
   terms_privacy_content: '收集项目：姓名、出生日期、手机号码、电子邮件\n使用目的：身份验证及服务提供、防止欺诈\n保留期限：退出会员后5年',
-  terms_marketing_content: '接收Bipple钱包提供的活动、优惠折扣等营销信息。',
+  terms_marketing_content: '接收Beple钱包提供的活动、优惠折扣等营销信息。',
 
   // PIN
   pin_title: '设置交易密码',
@@ -160,7 +160,7 @@ const zh: Record<TranslationKeys, string> = {
 
   // KYC Success
   kyc_success_title: '验证完成',
-  kyc_success_msg: '身份验证已完成。\n现在您可以自由使用\nBipple钱包的所有服务。',
+  kyc_success_msg: '身份验证已完成。\n现在您可以自由使用\nBeple钱包的所有服务。',
   kyc_success_limit: '当前充值限额',
   kyc_success_grade: '验证等级',
   kyc_success_go_home: '前往首页',
@@ -553,7 +553,7 @@ const zh: Record<TranslationKeys, string> = {
   account_set_default_done: '默认账户已更改。',
 
   // Hardcoded fixes
-  app_name: 'Bipple钱包',
+  app_name: 'Beple钱包',
   pin_locked: 'PIN已锁定',
   pin_locked_msg: '尝试次数过多',
   faceid_label: '面部识别',

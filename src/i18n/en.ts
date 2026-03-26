@@ -32,7 +32,7 @@ const en: Record<TranslationKeys, string> = {
   lang_zh_sub: 'Chinese',
 
   // Login
-  login_title: 'Bipple Wallet',
+  login_title: 'Beple Wallet',
   login_subtitle: 'Get Started',
   login_google: 'Continue with Google',
   login_apple: 'Continue with Apple',
@@ -49,7 +49,7 @@ const en: Record<TranslationKeys, string> = {
 
   // Sign Up
   signup_title: 'Sign Up',
-  signup_heading: 'Welcome to\nBipple Wallet',
+  signup_heading: 'Welcome to\nBeple Wallet',
   signup_desc: 'Please enter your basic information to get started.',
   signup_fullname: 'Full Name',
   signup_fullname_placeholder: 'John Smith',
@@ -67,7 +67,7 @@ const en: Record<TranslationKeys, string> = {
 
   // Terms
   terms_title: 'Terms of Service',
-  terms_heading: 'Please agree to the terms\nto use Bipple Wallet',
+  terms_heading: 'Please agree to the terms\nto use Beple Wallet',
   terms_desc: 'Required for smooth service delivery.',
   terms_all: 'Agree to All Terms',
   terms_required: 'Required',
@@ -76,9 +76,9 @@ const en: Record<TranslationKeys, string> = {
   terms_privacy_collect: 'Personal Data Collection & Use Agreement',
   terms_marketing: 'Marketing Communications Agreement',
   terms_agree_continue: 'Agree & Continue',
-  terms_service_content: 'Article 1 (Purpose) These terms define the rights, obligations, and responsibilities between Bipple Pay Co., Ltd. ("Company") and members regarding the use of Bipple Wallet services.',
+  terms_service_content: 'Article 1 (Purpose) These terms define the rights, obligations, and responsibilities between Bipple Pay Co., Ltd. ("Company") and members regarding the use of Beple Wallet services.',
   terms_privacy_content: 'Collected items: Name, Date of Birth, Phone Number, Email\nPurpose: Identity verification and service provision, fraud prevention\nRetention period: 5 years after membership withdrawal',
-  terms_marketing_content: 'Receive marketing information including events and discount offers from Bipple Wallet.',
+  terms_marketing_content: 'Receive marketing information including events and discount offers from Beple Wallet.',
 
   // PIN
   pin_title: 'Set Transaction PIN',
@@ -160,7 +160,7 @@ const en: Record<TranslationKeys, string> = {
 
   // KYC Success
   kyc_success_title: 'Verification Complete',
-  kyc_success_msg: 'Identity verification is complete.\nYou can now freely use all\nBipple Wallet services.',
+  kyc_success_msg: 'Identity verification is complete.\nYou can now freely use all\nBeple Wallet services.',
   kyc_success_limit: 'Current Charging Limit',
   kyc_success_grade: 'Verification Level',
   kyc_success_go_home: 'Go to Home',
@@ -553,7 +553,7 @@ const en: Record<TranslationKeys, string> = {
   account_set_default_done: 'Default account changed.',
 
   // Hardcoded fixes
-  app_name: 'Bipple Wallet',
+  app_name: 'Beple Wallet',
   pin_locked: 'PIN Locked',
   pin_locked_msg: 'Too many failed attempts',
   faceid_label: 'Face ID',

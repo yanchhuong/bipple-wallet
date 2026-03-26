@@ -1,6 +1,6 @@
-# Bipple Wallet — Implementation Status vs Requirements
+# Beple Wallet — Implementation Status vs Requirements
 
-Cross-reference of 비플월렛 개발 메타 프롬프트 requirements against current prototype.
+Cross-reference of 베플월렛 개발 메타 프롬프트 requirements against current prototype.
 
 > Legend: ✅ Implemented | ⚠️ Partial | ❌ Not Yet | 🔲 Backend Only (N/A for UI prototype)
 

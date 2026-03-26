@@ -184,7 +184,7 @@ const initialState = {
   notifications: [
     { id: '1', type: 'payment', title: '결제 완료', message: '스타벅스 강남점에서 5,200원 결제가 완료되었습니다.', date: '2026.03.20 14:30', read: false },
     { id: '2', type: 'charge', title: '충전 완료', message: 'Triple-A를 통해 100 USDT 충전이 완료되었습니다.', date: '2026.03.19 10:15', read: false },
-    { id: '3', type: 'notice', title: '공지사항', message: '비플월렛 정식 서비스 오픈 안내', date: '2026.03.18 09:00', read: true },
+    { id: '3', type: 'notice', title: '공지사항', message: '베플월렛 정식 서비스 오픈 안내', date: '2026.03.18 09:00', read: true },
     { id: '4', type: 'event', title: '이벤트', message: '신규 가입 고객 대상 웰컴 쿠폰 지급 안내', date: '2026.03.15 11:30', read: true },
   ] as Notification[],
 
