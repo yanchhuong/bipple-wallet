@@ -532,6 +532,30 @@ const zh: Record<TranslationKeys, string> = {
   account_removed: '账户已删除。',
   account_set_default_done: '默认账户已更改。',
 
+  // Hardcoded fixes
+  app_name: 'Bipple钱包',
+  pin_locked: 'PIN已锁定',
+  pin_locked_msg: '尝试次数过多',
+  faceid_label: '面部识别',
+  demo_simulate: '演示：模拟失败',
+  demo_passport: '护照',
+  demo_face: '面部',
+  demo_stay: '居留',
+  demo_timeout: '超时',
+  badge_new: 'New',
+  api_key_fail: 'API密钥验证失败。',
+  asset_count: '个资产',
+  attempt_count: '次失败',
+  min_score: '最低：80%',
+  version_number: 'v1.02',
+
+  // Theme
+  settings_theme: '主题设置',
+  settings_theme_desc: '更改应用主题',
+  theme_light: '浅色',
+  theme_dark: '深色',
+  theme_system: '跟随系统',
+
   // OTP Verification
   otp_verify: '验证',
   otp_verified: '已验证',

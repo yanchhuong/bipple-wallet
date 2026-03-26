@@ -297,7 +297,7 @@ export default function SettingsCoins() {
             </div>
             <div>
               <p className="font-semibold text-sm text-text-dark">{exchanges.find(e => e.id === selExchange)?.name} · {selCoin}</p>
-              <p className="text-xs text-red-500 mt-0.5">API Key validation failed</p>
+              <p className="text-xs text-red-500 mt-0.5">{t('api_key_fail')}</p>
             </div>
           </div>
         </div>

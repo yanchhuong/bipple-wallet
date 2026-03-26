@@ -22,6 +22,7 @@ function uniqueId() {
 }
 
 export type Language = 'ko' | 'en' | 'zh'
+export type Theme = 'light' | 'dark' | 'system'
 
 export interface CoinAsset {
   id: string
@@ -89,6 +90,7 @@ interface AppState {
   profile: UserProfile
 
   // Settings
+  theme: Theme
   notificationsEnabled: boolean
   faceIdEnabled: boolean
 
@@ -119,6 +121,7 @@ interface AppState {
   completeKyc: () => void
   setKycData: (data: Partial<AppState['kycData']>) => void
   updateProfile: (data: Partial<UserProfile>) => void
+  setTheme: (theme: Theme) => void
   setNotificationsEnabled: (v: boolean) => void
   setFaceIdEnabled: (v: boolean) => void
   chargeBippleMoney: (amount: number) => void
@@ -155,6 +158,7 @@ const initialState = {
     residenceId: '',
   },
 
+  theme: 'light' as Theme,
   notificationsEnabled: true,
   faceIdEnabled: false,
 
@@ -197,6 +201,7 @@ export const useStore = create<AppState>()(
       ...initialState,
 
       setLanguage: (lang) => set({ language: lang }),
+      setTheme: (theme) => set({ theme }),
       login: (method) => set({ isLoggedIn: true, loginMethod: method || null, korbitConnected: method === 'korbit' }),
       setUserType: (type) => set({ userType: type }),
       setPin: (pin) => set({ pin, pinSet: true }),

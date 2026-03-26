@@ -46,7 +46,7 @@ export default function KycPassport() {
         <p className="text-sm text-text-gray text-center whitespace-pre-line mb-2">
           {t('kyc_ocr_fail_msg')}
         </p>
-        <p className="text-xs text-text-light mb-8">({failCount}/3 attempts)</p>
+        <p className="text-xs text-text-light mb-8">({failCount}/3 {t('attempt_count')})</p>
       </div>
       <div className="px-6 pb-8 space-y-2">
         <button onClick={handleRetry}
@@ -225,7 +225,7 @@ export default function KycPassport() {
 
         {/* Fail count indicator */}
         {failCount > 0 && state === 'ready' && (
-          <p className="text-amber-400 text-xs mt-2">⚠ {failCount}/3 failed attempts</p>
+          <p className="text-amber-400 text-xs mt-2">⚠ {failCount}/3 {t('attempt_count')}</p>
         )}
       </div>
 

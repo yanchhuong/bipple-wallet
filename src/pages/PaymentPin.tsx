@@ -69,9 +69,9 @@ export default function PaymentPin() {
           <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-6">
             <Lock size={36} className="text-red-500" />
           </div>
-          <h2 className="text-lg font-bold text-text-dark mb-2">PIN Locked</h2>
+          <h2 className="text-lg font-bold text-text-dark mb-2">{t('pin_locked')}</h2>
           <p className="text-sm text-text-gray text-center mb-4">
-            Too many failed attempts ({PIN_MAX_ATTEMPTS}/{PIN_MAX_ATTEMPTS})
+            {t('pin_locked_msg')} ({PIN_MAX_ATTEMPTS}/{PIN_MAX_ATTEMPTS})
           </p>
           <div className="bg-red-50 rounded-xl px-6 py-3">
             <span className="text-2xl font-mono font-bold text-red-500">

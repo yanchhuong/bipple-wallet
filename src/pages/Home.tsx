@@ -35,7 +35,7 @@ export default function Home() {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-white text-xs font-bold">B</span>
           </div>
-          <span className="font-bold text-text-dark">Bipple Wallet</span>
+          <span className="font-bold text-text-dark">{t('app_name')}</span>
         </div>
         <button onClick={() => navigate('/notifications')} className="relative p-2">
           <Bell size={22} className="text-text-dark" />
@@ -101,7 +101,7 @@ export default function Home() {
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-bold text-sm">{wallet.source}</p>
-                        <p className="text-white/70 text-xs">{wallet.coins.length} asset{wallet.coins.length > 1 ? 's' : ''}</p>
+                        <p className="text-white/70 text-xs">{wallet.coins.length} {t('asset_count')}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-white font-bold">≈ {wallet.totalKrw.toLocaleString()}</p>

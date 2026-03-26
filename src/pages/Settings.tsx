@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useStore, type Language } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { BottomNav } from '../components/BottomNav'
-import { ChevronRight, CreditCard, Coins, Lock, FileText, Info, LogOut, Globe, Bell, ScanFace, ShieldCheck, ShieldX } from 'lucide-react'
+import { ChevronRight, CreditCard, Coins, Lock, FileText, Info, LogOut, Globe, Bell, ScanFace, ShieldCheck, ShieldX, Sun, Moon, Monitor, Palette } from 'lucide-react'
+import type { Theme } from '../store/useStore'
 import { Modal } from '../components/Modal'
 import { BottomSheet } from '../components/BottomSheet'
 import { toast } from '../components/Toast'
@@ -30,10 +31,18 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
 export default function Settings() {
   const navigate = useNavigate()
   const store = useStore()
-  const { language, setLanguage, profile, isKycComplete, userType, notificationsEnabled, setNotificationsEnabled, faceIdEnabled, setFaceIdEnabled, logout } = store
+  const { language, setLanguage, theme, setTheme, profile, isKycComplete, userType, notificationsEnabled, setNotificationsEnabled, faceIdEnabled, setFaceIdEnabled, logout } = store
   const t = useT()
   const [logoutModal, setLogoutModal] = useState(false)
   const [langSheet, setLangSheet] = useState(false)
+  const [themeSheet, setThemeSheet] = useState(false)
+
+  const themeOptions: { code: Theme; label: string; icon: typeof Sun }[] = [
+    { code: 'light', label: t('theme_light'), icon: Sun },
+    { code: 'dark', label: t('theme_dark'), icon: Moon },
+    { code: 'system', label: t('theme_system'), icon: Monitor },
+  ]
+  const currentThemeLabel = themeOptions.find(o => o.code === theme)?.label || t('theme_light')
 
   const currentLangLabel = languageOptions.find(l => l.code === language)?.label || 'Korean'
 
@@ -87,6 +96,17 @@ export default function Settings() {
               <p className="text-[10px] text-text-light mt-0.5">{t('settings_language_desc')}</p>
             </div>
             <span className="text-xs text-primary font-medium mr-1">{currentLangLabel}</span>
+            <ChevronRight size={16} className="text-text-light" />
+          </button>
+
+          {/* Theme */}
+          <button onClick={() => setThemeSheet(true)} className="w-full flex items-center gap-3 px-4 py-4 active:bg-gray-50 border-b border-border">
+            <div className="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center"><Palette size={18} className="text-violet-500" /></div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-medium text-text-dark">{t('settings_theme')}</p>
+              <p className="text-[10px] text-text-light mt-0.5">{t('settings_theme_desc')}</p>
+            </div>
+            <span className="text-xs text-primary font-medium mr-1">{currentThemeLabel}</span>
             <ChevronRight size={16} className="text-text-light" />
           </button>
 
@@ -192,6 +212,37 @@ export default function Settings() {
                 )}
               </button>
             ))}
+          </div>
+        </div>
+      </BottomSheet>
+
+      {/* Theme Bottom Sheet */}
+      <BottomSheet open={themeSheet} onClose={() => setThemeSheet(false)}>
+        <div className="px-6 py-4">
+          <h3 className="text-base font-semibold text-text-dark mb-4">{t('settings_theme')}</h3>
+          <div className="space-y-2">
+            {themeOptions.map(opt => {
+              const Icon = opt.icon
+              return (
+                <button
+                  key={opt.code}
+                  onClick={() => { setTheme(opt.code); setThemeSheet(false); toast(`${opt.label}`) }}
+                  className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
+                    theme === opt.code ? 'border-primary bg-primary/5' : 'border-border'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon size={20} className={theme === opt.code ? 'text-primary' : 'text-text-gray'} />
+                    <span className={`font-medium ${theme === opt.code ? 'text-primary' : 'text-text-dark'}`}>{opt.label}</span>
+                  </div>
+                  {theme === opt.code && (
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                      <span className="text-white text-xs">✓</span>
+                    </div>
+                  )}
+                </button>
+              )
+            })}
           </div>
         </div>
       </BottomSheet>

@@ -16,8 +16,8 @@ export default function ChargeHub() {
   const options = [
     { icon: Landmark, label: t('charge_bank'), desc: t('charge_bank_desc'), path: '/charge-bank', section: t('charge_section_general'), badge: null, maintenance: false },
     { icon: Coins, label: t('charge_coin'), desc: t('charge_coin_desc'), path: '/charge-coin', section: t('charge_section_general'), badge: null, maintenance: false },
-    { icon: Globe, label: t('charge_triplea'), desc: t('charge_triplea_desc'), path: '/charge-triplea', section: t('charge_section_external'), badge: 'New', maintenance: false },
-    { icon: BarChart3, label: t('charge_korbit'), desc: t('charge_korbit_desc'), path: '/charge-korbit', section: t('charge_section_external'), badge: 'New', maintenance: korbitMaintenance },
+    { icon: Globe, label: t('charge_triplea'), desc: t('charge_triplea_desc'), path: '/charge-triplea', section: t('charge_section_external'), badge: t('badge_new'), maintenance: false },
+    { icon: BarChart3, label: t('charge_korbit'), desc: t('charge_korbit_desc'), path: '/charge-korbit', section: t('charge_section_external'), badge: t('badge_new'), maintenance: korbitMaintenance },
   ]
 
   const sections = [...new Set(options.map(o => o.section))]

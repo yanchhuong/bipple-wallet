@@ -530,6 +530,30 @@ const ko = {
   account_removed: '계좌가 삭제되었습니다.',
   account_set_default_done: '기본 계좌가 변경되었습니다.',
 
+  // Hardcoded fixes
+  app_name: '비플월렛',
+  pin_locked: 'PIN 잠금',
+  pin_locked_msg: '입력 시도 초과',
+  faceid_label: '얼굴 인식',
+  demo_simulate: '데모: 실패 시뮬레이션',
+  demo_passport: '여권',
+  demo_face: '안면',
+  demo_stay: '체류',
+  demo_timeout: '타임아웃',
+  badge_new: 'New',
+  api_key_fail: 'API 키 검증에 실패했습니다.',
+  asset_count: '개 자산',
+  attempt_count: '회 실패',
+  min_score: '최소: 80%',
+  version_number: 'v1.02',
+
+  // Theme
+  settings_theme: '테마 설정',
+  settings_theme_desc: '앱 테마 변경',
+  theme_light: '라이트',
+  theme_dark: '다크',
+  theme_system: '시스템',
+
   // OTP Verification
   otp_verify: '인증하기',
   otp_verified: '인증완료',

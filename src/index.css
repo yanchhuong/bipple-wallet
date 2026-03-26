@@ -104,3 +104,42 @@ html, body, #root {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
 }
+
+/* ===== Dark Theme ===== */
+.dark .phone-frame {
+  background: #111827;
+}
+
+.dark .bg-white { background-color: #1f2937 !important; }
+.dark .bg-bg-gray { background-color: #111827 !important; }
+.dark .bg-gray-50 { background-color: #1a2332 !important; }
+.dark .bg-gray-100 { background-color: #1f2937 !important; }
+.dark .bg-gray-200 { background-color: #374151 !important; }
+
+.dark .text-text-dark { color: #f3f4f6 !important; }
+.dark .text-text-gray { color: #9ca3af !important; }
+.dark .text-text-light { color: #6b7280 !important; }
+.dark .text-black { color: #f3f4f6 !important; }
+
+.dark .border-border { border-color: #374151 !important; }
+.dark .border-b { border-color: #374151; }
+
+.dark input, .dark textarea {
+  background-color: #1a2332 !important;
+  color: #f3f4f6 !important;
+  border-color: #374151 !important;
+}
+.dark input::placeholder { color: #6b7280 !important; }
+.dark input:focus { border-color: #3b82f6 !important; }
+
+.dark .bg-primary\/5 { background-color: rgba(26, 86, 219, 0.1) !important; }
+.dark .bg-primary\/10 { background-color: rgba(26, 86, 219, 0.15) !important; }
+
+.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.15) !important; }
+.dark .bg-green-50 { background-color: rgba(22, 163, 74, 0.15) !important; }
+.dark .bg-red-50 { background-color: rgba(220, 38, 38, 0.15) !important; }
+.dark .bg-yellow-50 { background-color: rgba(245, 158, 11, 0.15) !important; }
+.dark .bg-orange-50 { background-color: rgba(249, 115, 22, 0.15) !important; }
+.dark .bg-purple-50 { background-color: rgba(147, 51, 234, 0.15) !important; }
+.dark .bg-violet-50 { background-color: rgba(139, 92, 246, 0.15) !important; }
+.dark .bg-amber-50 { background-color: rgba(245, 158, 11, 0.15) !important; }

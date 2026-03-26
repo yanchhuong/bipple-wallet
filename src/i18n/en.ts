@@ -532,6 +532,30 @@ const en: Record<TranslationKeys, string> = {
   account_removed: 'Account removed.',
   account_set_default_done: 'Default account changed.',
 
+  // Hardcoded fixes
+  app_name: 'Bipple Wallet',
+  pin_locked: 'PIN Locked',
+  pin_locked_msg: 'Too many failed attempts',
+  faceid_label: 'Face ID',
+  demo_simulate: 'Demo: Simulate Failure',
+  demo_passport: 'Passport',
+  demo_face: 'Face',
+  demo_stay: 'Stay',
+  demo_timeout: 'Timeout',
+  badge_new: 'New',
+  api_key_fail: 'API key validation failed.',
+  asset_count: 'asset(s)',
+  attempt_count: 'failed attempt(s)',
+  min_score: 'min: 80%',
+  version_number: 'v1.02',
+
+  // Theme
+  settings_theme: 'Theme',
+  settings_theme_desc: 'Change app theme',
+  theme_light: 'Light',
+  theme_dark: 'Dark',
+  theme_system: 'System',
+
   // OTP Verification
   otp_verify: 'Verify',
   otp_verified: 'Verified',

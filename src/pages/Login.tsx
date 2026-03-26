@@ -75,7 +75,7 @@ export default function Login() {
           setAttempts(nextAttempts)
           setPinInput('')
           if (nextAttempts >= PIN_MAX_ATTEMPTS) {
-            setPinError(`PIN locked (${PIN_MAX_ATTEMPTS}/${PIN_MAX_ATTEMPTS})`)
+            setPinError(`${t('pin_locked')} (${PIN_MAX_ATTEMPTS}/${PIN_MAX_ATTEMPTS})`)
             setTimeout(() => { setAuthMode('idle'); setPinError(''); setAttempts(0) }, 5000)
           } else {
             setPinError(`${t('pay_pin_error')} (${nextAttempts}/${PIN_MAX_ATTEMPTS})`)
@@ -239,7 +239,7 @@ export default function Login() {
               setPinInput(''); setPinError(''); setAuthMode('idle')
               setTimeout(() => handleCredentialLogin(), 100)
             }} className="mt-3 flex items-center gap-1.5 text-xs text-primary font-medium">
-              <ScanFace size={14} /> Face ID
+              <ScanFace size={14} /> {t('faceid_label')}
             </button>
           )}
         </div>

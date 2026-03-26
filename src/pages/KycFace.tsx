@@ -85,7 +85,7 @@ export default function KycFace() {
         <div className="flex items-center gap-2 mb-4">
           <span className="text-white/50 text-xs">{t('kyc_face_score')}:</span>
           <span className="text-red-400 font-mono text-sm font-bold">{matchScore}%</span>
-          <span className="text-red-400 text-xs">(min: 80%)</span>
+          <span className="text-red-400 text-xs">({t('min_score')})</span>
         </div>
 
         {/* Tips */}
@@ -234,7 +234,7 @@ export default function KycFace() {
 
         {/* Fail count warning */}
         {failCount > 0 && state === 'ready' && (
-          <p className="text-amber-400 text-xs mt-3">⚠ {failCount} failed attempt{failCount > 1 ? 's' : ''}</p>
+          <p className="text-amber-400 text-xs mt-3">⚠ {failCount} {t('attempt_count')}</p>
         )}
       </div>
 
