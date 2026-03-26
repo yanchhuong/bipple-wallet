@@ -162,29 +162,17 @@ const initialState = {
   notificationsEnabled: true,
   faceIdEnabled: false,
 
-  bippleMoney: 150000,
+  bippleMoney: 0,
   coins: [
     { id: '1', symbol: 'USDC', name: 'USD Coin', balance: 50.0, unit: 'USDC', source: 'Triple-A', krwValue: 67500, rate: 1350 },
     { id: '2', symbol: 'ETH', name: 'Ethereum', balance: 0.05, unit: 'ETH', source: 'Korbit', krwValue: 120000, rate: 2400000 },
     { id: '3', symbol: 'BTC', name: 'Bitcoin', balance: 0.002, unit: 'BTC', source: 'Korbit', krwValue: 165000, rate: 82500000 },
   ] as CoinAsset[],
-  transactions: [
-    { id: '1', type: 'payment', title: '스타벅스 강남점', subtitle: '결제', amount: -5200, balance: 150000, date: '2026.03.20', time: '14:30:22', status: 'completed', paymentMethod: 'bipple' },
-    { id: '2', type: 'charge', title: '비플머니 충전', subtitle: 'Triple-A', amount: 50000, balance: 155200, date: '2026.03.19', time: '10:15:05', status: 'completed', paymentMethod: 'bipple' },
-    { id: '3', type: 'atm', title: 'NICE ATM 출금', subtitle: 'ATM', amount: -10000, balance: 105200, date: '2026.03.18', time: '18:45:11', status: 'completed', paymentMethod: 'bipple' },
-    { id: '4', type: 'fee', title: 'ATM 출금 수수료', subtitle: '수수료', amount: -1300, balance: 115200, date: '2026.03.18', time: '18:45:11', status: 'completed', paymentMethod: 'bipple' },
-    { id: '5', type: 'charge', title: '비플머니 충전', subtitle: '은행', amount: 30000, balance: 116500, date: '2026.03.17', time: '09:20:00', status: 'completed', paymentMethod: 'bipple' },
-    { id: '6', type: 'payment', title: 'CU 역삼점', subtitle: '결제', amount: -3500, balance: 86500, date: '2026.03.16', time: '12:10:33', status: 'completed', paymentMethod: 'bipple' },
-    { id: '7', type: 'payment', title: '교보문고', subtitle: '결제', amount: -15000, balance: 90000, date: '2026.03.15', time: '16:22:10', status: 'completed', paymentMethod: 'coin' },
-    { id: '8', type: 'charge', title: 'Korbit 매도 충전', subtitle: 'Korbit', amount: 100000, balance: 105000, date: '2026.03.14', time: '11:05:30', status: 'completed', paymentMethod: 'bipple' },
-    { id: '9', type: 'atm', title: 'NICE ATM 출금', subtitle: 'ATM', amount: -30000, balance: 5000, date: '2026.03.13', time: '09:30:00', status: 'completed', paymentMethod: 'bipple' },
-    { id: '10', type: 'payment', title: '이디야 커피', subtitle: '결제', amount: -4200, balance: 35000, date: '2026.03.12', time: '08:15:45', status: 'failed', paymentMethod: 'bipple' },
-    { id: '11', type: 'charge', title: '비플머니 충전', subtitle: '은행', amount: 200000, balance: 39200, date: '2026.03.10', time: '14:00:00', status: 'pending', paymentMethod: 'bipple' },
-  ] as Transaction[],
+  transactions: [] as Transaction[],
   notifications: [
     { id: '1', type: 'payment', title: '결제 완료', message: '스타벅스 강남점에서 5,200원 결제가 완료되었습니다.', date: '2026.03.20 14:30', read: false },
     { id: '2', type: 'charge', title: '충전 완료', message: 'Triple-A를 통해 100 USDT 충전이 완료되었습니다.', date: '2026.03.19 10:15', read: false },
-    { id: '3', type: 'notice', title: '공지사항', message: '베플월렛 정식 서비스 오픈 안내', date: '2026.03.18 09:00', read: true },
+    { id: '3', type: 'notice', title: '공지사항', message: '비플월렛 정식 서비스 오픈 안내', date: '2026.03.18 09:00', read: true },
     { id: '4', type: 'event', title: '이벤트', message: '신규 가입 고객 대상 웰컴 쿠폰 지급 안내', date: '2026.03.15 11:30', read: true },
   ] as Notification[],
 
@@ -298,7 +286,13 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'bipple-wallet-storage',
-      version: 1,
+      version: 2,
+      migrate: (persistedState, version) => {
+        if (version < 2 && persistedState && typeof persistedState === 'object') {
+          return { ...persistedState, bippleMoney: 0, transactions: [] as Transaction[] }
+        }
+        return persistedState as AppState
+      },
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(([, v]) => typeof v !== 'function')

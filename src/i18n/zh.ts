@@ -10,6 +10,7 @@ const zh: Record<TranslationKeys, string> = {
   done: '完成',
   loading: '请稍候...',
   launch_tap_hint: '点击继续',
+  launch_tagline: '比普钱包，\n为智能支付增添自由。',
   error: '错误',
   retry: '重试',
   save: '保存',

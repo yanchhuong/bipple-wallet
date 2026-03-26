@@ -4,7 +4,8 @@ import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { Modal } from '../components/Modal'
 import { toast } from '../components/Toast'
-import { Wallet, UserPlus, Phone, Mail, ScanFace, Lock, ChevronRight, Loader2, CheckCircle } from 'lucide-react'
+import { UserPlus, Phone, Mail, ScanFace, Lock, ChevronRight, Loader2, CheckCircle } from 'lucide-react'
+import { AppLogo } from '../components/AppLogo'
 import { PIN_MAX_ATTEMPTS } from '../constants'
 
 type AuthMode = 'idle' | 'pin' | 'face-scanning' | 'face-done' | 'success'
@@ -92,9 +93,10 @@ export default function Login() {
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
       <div className="flex-1 flex flex-col items-center px-6 pt-12 overflow-y-auto">
         {/* Logo */}
-        <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mb-6 shadow-lg shadow-primary/30">
-          <Wallet size={40} className="text-white" />
-        </div>
+        <AppLogo
+          className="mb-6 h-20 w-20 rounded-3xl shadow-lg shadow-primary/25"
+          aria-hidden
+        />
         <h1 className="text-2xl font-bold text-text-dark mb-1">{t('login_title')}</h1>
         <p className="text-sm text-text-gray mb-8">{t('login_subtitle')}</p>
 

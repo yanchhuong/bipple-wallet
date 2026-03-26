@@ -1,4 +1,4 @@
-# Beple Wallet (베플월렛)
+# Beple Wallet (비플월렛)
 
 Hybrid payment wallet for domestic Korean users and foreign tourists — charge, pay, and withdraw KRW through crypto exchanges and stablecoin platforms.
 

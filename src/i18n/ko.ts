@@ -8,6 +8,7 @@ const ko = {
   done: '완료',
   loading: '잠시만 기다려주세요...',
   launch_tap_hint: '탭하여 계속',
+  launch_tagline: '비플월렛,\n스마트한 결제에 자유를 더하다',
   error: '오류',
   retry: '다시 시도',
   save: '저장',
@@ -30,7 +31,7 @@ const ko = {
   lang_zh_sub: '중국어',
 
   // Login
-  login_title: '베플월렛',
+  login_title: '비플월렛',
   login_subtitle: '시작하기',
   login_google: 'Google로 계속하기',
   login_apple: 'Apple로 계속하기',
@@ -47,7 +48,7 @@ const ko = {
 
   // Sign Up
   signup_title: '회원가입',
-  signup_heading: '베플월렛에 오신 것을\n환영합니다',
+  signup_heading: '비플월렛에 오신 것을\n환영합니다',
   signup_desc: '서비스 이용을 위한 기본 정보를 입력해주세요.',
   signup_fullname: '이름 (Full Name)',
   signup_fullname_placeholder: '홍길동',
@@ -65,7 +66,7 @@ const ko = {
 
   // Terms
   terms_title: '약관 동의',
-  terms_heading: '베플월렛 서비스 이용을 위해\n약관에 동의해주세요',
+  terms_heading: '비플월렛 서비스 이용을 위해\n약관에 동의해주세요',
   terms_desc: '원활한 서비스 제공을 위해 필요한 약관입니다.',
   terms_all: '약관 전체 동의',
   terms_required: '필수',
@@ -74,9 +75,9 @@ const ko = {
   terms_privacy_collect: '개인정보 수집 및 이용 동의',
   terms_marketing: '마케팅 정보 수신 동의',
   terms_agree_continue: '동의하고 계속',
-  terms_service_content: '제 1조 (목적) 본 약관은 주식회사 비플페이(이하 "회사")가 제공하는 베플월렛 서비스의 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.',
+  terms_service_content: '제 1조 (목적) 본 약관은 주식회사 비플페이(이하 "회사")가 제공하는 비플월렛 서비스의 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.',
   terms_privacy_content: '수집항목: 성명, 생년월일, 휴대전화번호, 이메일\n이용목적: 본인확인 및 서비스 제공, 부정이용 방지\n보유기간: 회원 탈퇴 후 5년',
-  terms_marketing_content: '베플월렛에서 제공하는 이벤트, 할인 혜택 등의 마케팅 정보를 수신합니다.',
+  terms_marketing_content: '비플월렛에서 제공하는 이벤트, 할인 혜택 등의 마케팅 정보를 수신합니다.',
 
   // PIN
   pin_title: '거래승인번호 설정',
@@ -158,7 +159,7 @@ const ko = {
 
   // KYC Success
   kyc_success_title: '인증 완료',
-  kyc_success_msg: '본인 인증이 완료되었습니다.\n이제 베플월렛의 모든 서비스를\n자유롭게 이용하실 수 있습니다.',
+  kyc_success_msg: '본인 인증이 완료되었습니다.\n이제 비플월렛의 모든 서비스를\n자유롭게 이용하실 수 있습니다.',
   kyc_success_limit: '현재 충전 한도 (Limit)',
   kyc_success_grade: '인증 등급',
   kyc_success_go_home: '홈으로 이동 (Go Home)',
@@ -551,7 +552,7 @@ const ko = {
   account_set_default_done: '기본 계좌가 변경되었습니다.',
 
   // Hardcoded fixes
-  app_name: '베플월렛',
+  app_name: '비플월렛',
   pin_locked: 'PIN 잠금',
   pin_locked_msg: '입력 시도 초과',
   faceid_label: '얼굴 인식',

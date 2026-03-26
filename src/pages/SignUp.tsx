@@ -7,6 +7,7 @@ import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { toast } from '../components/Toast'
 import { User, Phone, Mail, ChevronRight, Loader2, CheckCircle, ShieldCheck } from 'lucide-react'
+import { AppLogo } from '../components/AppLogo'
 
 type OtpTarget = 'phone' | 'email' | null
 type OtpStep = 'idle' | 'sending' | 'input' | 'verifying' | 'done'
@@ -131,6 +132,9 @@ export default function SignUp() {
       <Header title={t('signup_title')} />
 
       <div className="flex-1 px-6 pt-5 overflow-y-auto">
+        <div className="flex justify-center mb-5">
+          <AppLogo className="h-16 w-16 rounded-xl" aria-hidden />
+        </div>
         <StepIndicator current={1} />
 
         <h2 className="text-lg font-bold text-text-dark whitespace-pre-line">{t('signup_heading')}</h2>

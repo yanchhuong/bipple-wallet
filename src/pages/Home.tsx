@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { BottomNav } from '../components/BottomNav'
+import { AppLogo } from '../components/AppLogo'
 import { Bell, CreditCard, QrCode, Landmark, ChevronRight, TrendingUp, Globe, BarChart3 } from 'lucide-react'
 
 const sourceStyle: Record<string, { icon: typeof Globe; gradient: string; iconBg: string }> = {
@@ -32,9 +33,7 @@ export default function Home() {
     <div className="flex flex-col h-[calc(100%-44px)] bg-bg-gray">
       <div className="flex items-center justify-between px-5 py-3 bg-white">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-white text-xs font-bold">B</span>
-          </div>
+          <AppLogo className="h-9 w-9 shrink-0 rounded-lg" aria-hidden />
           <span className="font-bold text-text-dark">{t('app_name')}</span>
         </div>
         <button onClick={() => navigate('/notifications')} className="relative p-2">
