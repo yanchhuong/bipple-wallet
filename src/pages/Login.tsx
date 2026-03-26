@@ -1,28 +1,153 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
-import { Wallet, UserPlus } from 'lucide-react'
+import { Modal } from '../components/Modal'
+import { toast } from '../components/Toast'
+import { Wallet, UserPlus, Phone, Mail, ScanFace, Lock, ChevronRight, Loader2, CheckCircle } from 'lucide-react'
+import { PIN_MAX_ATTEMPTS } from '../constants'
+
+type AuthMode = 'idle' | 'pin' | 'face-scanning' | 'face-done' | 'success'
 
 export default function Login() {
-  const { login } = useStore()
+  const store = useStore()
+  const { login, profile, pin, pinSet, faceIdEnabled } = store
   const navigate = useNavigate()
   const t = useT()
+
+  const [credential, setCredential] = useState('')
+  const [authMode, setAuthMode] = useState<AuthMode>('idle')
+  const [pinInput, setPinInput] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [attempts, setAttempts] = useState(0)
+
+  // Detect if this is a returning user (has saved profile with PIN)
+  const isReturning = pinSet && pin !== '' && profile.name !== '홍길동'
+  const credentialType: 'phone' | 'email' | null =
+    credential.includes('@') ? 'email' :
+    credential.replace(/[^0-9]/g, '').length >= 8 ? 'phone' : null
+
+  const canLogin = credentialType !== null
 
   const handleSocialLogin = (method: 'google' | 'apple') => {
     login(method)
     navigate('/terms')
   }
 
+  const handleCredentialLogin = () => {
+    if (!canLogin) return
+    // Check if Face ID is on → go to face scan, otherwise PIN
+    if (faceIdEnabled) {
+      setAuthMode('face-scanning')
+      // Simulate face scan (2s)
+      setTimeout(() => {
+        setAuthMode('face-done')
+        setTimeout(() => {
+          setAuthMode('success')
+          login(credentialType!)
+          setTimeout(() => navigate('/home', { replace: true }), 600)
+        }, 800)
+      }, 2000)
+    } else {
+      setAuthMode('pin')
+    }
+  }
+
+  const handlePinKey = (key: string) => {
+    if (key === 'del') {
+      setPinInput(p => p.slice(0, -1))
+      setPinError('')
+      return
+    }
+    if (pinInput.length >= 6) return
+    const next = pinInput + key
+    setPinInput(next)
+
+    if (next.length === 6) {
+      setTimeout(() => {
+        if (next === pin) {
+          setAuthMode('success')
+          login(credentialType!)
+          toast(t('otp_success'), 'success')
+          setTimeout(() => navigate('/home', { replace: true }), 600)
+        } else {
+          const nextAttempts = attempts + 1
+          setAttempts(nextAttempts)
+          setPinInput('')
+          if (nextAttempts >= PIN_MAX_ATTEMPTS) {
+            setPinError(`PIN locked (${PIN_MAX_ATTEMPTS}/${PIN_MAX_ATTEMPTS})`)
+            setTimeout(() => { setAuthMode('idle'); setPinError(''); setAttempts(0) }, 5000)
+          } else {
+            setPinError(`${t('pay_pin_error')} (${nextAttempts}/${PIN_MAX_ATTEMPTS})`)
+            setTimeout(() => setPinError(''), 2000)
+          }
+        }
+      }, 200)
+    }
+  }
+
+  const pinKeys = ['1','2','3','4','5','6','7','8','9','','0','del']
+
   return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
+      <div className="flex-1 flex flex-col items-center px-6 pt-12 overflow-y-auto">
+        {/* Logo */}
         <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center mb-6 shadow-lg shadow-primary/30">
           <Wallet size={40} className="text-white" />
         </div>
         <h1 className="text-2xl font-bold text-text-dark mb-1">{t('login_title')}</h1>
-        <p className="text-sm text-text-gray mb-10">{t('login_subtitle')}</p>
+        <p className="text-sm text-text-gray mb-8">{t('login_subtitle')}</p>
 
-        <div className="w-full space-y-3">
+        {/* Phone or Email Login */}
+        <div className="w-full mb-4">
+          <div className="relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              {credentialType === 'email'
+                ? <Mail size={18} className="text-primary" />
+                : credentialType === 'phone'
+                  ? <Phone size={18} className="text-primary" />
+                  : <Phone size={18} className="text-text-light" />
+              }
+            </div>
+            <input
+              type="text"
+              value={credential}
+              onChange={e => setCredential(e.target.value)}
+              placeholder={t('login_phone') + ' / ' + t('login_email')}
+              className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-border rounded-xl text-sm text-text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            />
+            {credentialType && (
+              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${
+                  credentialType === 'phone' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
+                }`}>
+                  {credentialType === 'phone' ? t('signup_phone') : t('signup_email')}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Login button - appears when valid credential */}
+          {canLogin && (
+            <button
+              onClick={handleCredentialLogin}
+              className="w-full mt-3 flex items-center justify-center gap-2 py-4 bg-primary text-white font-semibold rounded-xl active:bg-primary-dark transition-all animate-fade-in"
+            >
+              {faceIdEnabled ? <ScanFace size={20} /> : <Lock size={18} />}
+              <span>{t('login_signin')}</span>
+              <ChevronRight size={18} />
+            </button>
+          )}
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 w-full my-2">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-text-light">{t('login_or')}</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        <div className="w-full space-y-3 mt-2">
           {/* Google */}
           <button
             onClick={() => handleSocialLogin('google')}
@@ -52,12 +177,6 @@ export default function Login() {
             <span className="font-medium">{t('login_apple')}</span>
           </button>
 
-          <div className="flex items-center gap-3 my-3">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-text-light">{t('login_or')}</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-
           {/* Sign Up */}
           <button
             onClick={() => navigate('/signup')}
@@ -77,6 +196,89 @@ export default function Login() {
       <p className="text-center text-[10px] text-text-light px-10 pb-6">
         {t('login_agree')}
       </p>
+
+      {/* ===== PIN Input Modal ===== */}
+      <Modal open={authMode === 'pin'} onClose={() => { setAuthMode('idle'); setPinInput(''); setPinError('') }}>
+        <div className="flex flex-col items-center">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+            <Lock size={28} className="text-primary" />
+          </div>
+          <h3 className="text-base font-semibold text-text-dark mb-1">{t('pay_pin_enter')}</h3>
+          <p className="text-xs text-text-gray mb-5">{credential}</p>
+
+          {/* PIN dots */}
+          <div className="flex gap-3 mb-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className={`w-3.5 h-3.5 rounded-full transition-all duration-200 ${
+                i < pinInput.length ? 'bg-primary scale-110' : 'bg-gray-200'
+              }`} />
+            ))}
+          </div>
+
+          {pinError && <p className="text-error text-xs mb-3 animate-fade-in">{pinError}</p>}
+
+          {/* Keypad */}
+          <div className="grid grid-cols-3 gap-0 w-full -mx-6">
+            {pinKeys.map((key, i) => (
+              <button
+                key={i}
+                onClick={() => key && handlePinKey(key)}
+                disabled={!key}
+                className={`h-14 flex items-center justify-center text-xl font-medium transition-colors ${
+                  key === '' ? '' : 'active:bg-gray-100 rounded-lg'
+                } ${key === 'del' ? 'text-text-gray text-base' : 'text-text-dark'}`}
+              >
+                {key === 'del' ? t('pin_delete') : key}
+              </button>
+            ))}
+          </div>
+
+          {/* Switch to Face ID if available */}
+          {faceIdEnabled && (
+            <button onClick={() => {
+              setPinInput(''); setPinError(''); setAuthMode('idle')
+              setTimeout(() => handleCredentialLogin(), 100)
+            }} className="mt-3 flex items-center gap-1.5 text-xs text-primary font-medium">
+              <ScanFace size={14} /> Face ID
+            </button>
+          )}
+        </div>
+      </Modal>
+
+      {/* ===== Face ID Modal ===== */}
+      <Modal open={authMode === 'face-scanning' || authMode === 'face-done'} onClose={() => {}}>
+        <div className="flex flex-col items-center py-4">
+          {authMode === 'face-scanning' && (
+            <>
+              <div className="w-24 h-24 rounded-full border-4 border-primary/30 flex items-center justify-center mb-4 animate-pulse-slow">
+                <ScanFace size={48} className="text-primary" />
+              </div>
+              <p className="text-base font-semibold text-text-dark">{t('kyc_face_scanning')}</p>
+              <p className="text-xs text-text-gray mt-1">{credential}</p>
+              <Loader2 size={20} className="text-primary animate-spin mt-4" />
+            </>
+          )}
+          {authMode === 'face-done' && (
+            <>
+              <div className="w-24 h-24 rounded-full border-4 border-green-400 flex items-center justify-center mb-4 animate-bounce-in">
+                <ScanFace size={48} className="text-green-500" />
+              </div>
+              <p className="text-base font-semibold text-green-600">{t('kyc_face_done')}</p>
+            </>
+          )}
+        </div>
+      </Modal>
+
+      {/* ===== Success Modal ===== */}
+      <Modal open={authMode === 'success'} onClose={() => {}}>
+        <div className="flex flex-col items-center py-4 animate-fade-in">
+          <div className="animate-bounce-in">
+            <CheckCircle size={56} className="text-green-500 mb-3" />
+          </div>
+          <p className="text-base font-bold text-text-dark">{t('login_signin')}</p>
+          <p className="text-xs text-text-gray mt-1">{credential}</p>
+        </div>
+      </Modal>
     </div>
   )
 }
