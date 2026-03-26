@@ -547,6 +547,7 @@ const en: Record<TranslationKeys, string> = {
   otp_fail: 'Code does not match.',
   otp_phone_title: 'Phone Verification',
   otp_email_title: 'Email Verification',
+  otp_optional: 'Phone or email verification (optional)',
 
   // KYC Failure States
   kyc_ocr_fail_title: 'Passport Recognition Failed',

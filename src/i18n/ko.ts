@@ -545,6 +545,7 @@ const ko = {
   otp_fail: '인증번호가 일치하지 않습니다.',
   otp_phone_title: '휴대폰 인증',
   otp_email_title: '이메일 인증',
+  otp_optional: '휴대폰 또는 이메일 인증 (선택사항)',
 
   // KYC Failure States
   kyc_ocr_fail_title: '여권 정보 인식 불가',

@@ -31,8 +31,8 @@ export default function SignUp() {
   const [otpTimer, setOtpTimer] = useState(180)
 
   const infoValid = fullName.trim().length >= 2
-    && phone.trim().length >= 8 && phoneVerified
-    && email.includes('@') && emailVerified
+    && phone.trim().length >= 8
+    && email.includes('@')
 
   // OTP countdown timer
   useEffect(() => {
@@ -113,10 +113,10 @@ export default function SignUp() {
 
   const handleSubmit = () => {
     if (!fullName.trim()) { toast(t('signup_name_required'), 'error'); return }
-    if (!phoneVerified) { toast(t('signup_phone_required'), 'error'); return }
-    if (!emailVerified) { toast(t('signup_email_required'), 'error'); return }
+    if (!phone.trim()) { toast(t('signup_phone_required'), 'error'); return }
+    if (!email.trim()) { toast(t('signup_email_required'), 'error'); return }
     updateProfile({ name: fullName.trim(), phone: phone.trim(), email: email.trim() })
-    login('email')
+    login(phoneVerified ? 'phone' : emailVerified ? 'email' : 'email')
     navigate('/terms')
   }
 
@@ -134,7 +134,26 @@ export default function SignUp() {
         <StepIndicator current={1} />
 
         <h2 className="text-lg font-bold text-text-dark whitespace-pre-line">{t('signup_heading')}</h2>
-        <p className="text-xs text-text-gray mt-1 mb-6">{t('signup_desc')}</p>
+        <p className="text-xs text-text-gray mt-1 mb-4">{t('signup_desc')}</p>
+
+        {/* Verification status banner */}
+        {(phoneVerified || emailVerified) ? (
+          <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-xl mb-4">
+            <ShieldCheck size={14} className="text-green-600" />
+            <span className="text-xs text-green-700 font-medium">
+              {phoneVerified && emailVerified
+                ? `${t('otp_phone_title')} + ${t('otp_email_title')} ${t('otp_verified')}`
+                : phoneVerified ? `${t('otp_phone_title')} ${t('otp_verified')}`
+                : `${t('otp_email_title')} ${t('otp_verified')}`
+              }
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-xl mb-4">
+            <ShieldCheck size={14} className="text-text-light" />
+            <span className="text-[10px] text-text-light">{t('otp_optional')}</span>
+          </div>
+        )}
 
         <div className="space-y-4">
           {/* Full Name */}

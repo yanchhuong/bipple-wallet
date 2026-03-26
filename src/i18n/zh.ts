@@ -547,6 +547,7 @@ const zh: Record<TranslationKeys, string> = {
   otp_fail: '验证码不匹配。',
   otp_phone_title: '手机验证',
   otp_email_title: '邮箱验证',
+  otp_optional: '手机或邮箱验证（可选）',
 
   // KYC Failure States
   kyc_ocr_fail_title: '护照识别失败',
