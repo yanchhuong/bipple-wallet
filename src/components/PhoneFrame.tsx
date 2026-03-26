@@ -42,7 +42,7 @@ export function PhoneFrame({ children }: { children: React.ReactNode }) {
     <div className="h-full w-full flex items-center justify-center bg-gray-900">
       <div className="phone-frame">
         <div className="phone-notch" />
-        <div className="screen bg-white">
+        <div className="screen bg-white relative">
           <StatusBar />
           {children}
         </div>

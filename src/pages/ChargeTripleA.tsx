@@ -6,6 +6,7 @@ import { AlertTriangle, Copy, Clock, RefreshCw, CheckCircle, Loader2 } from 'luc
 import { toast } from '../components/Toast'
 
 type Step = 'coin' | 'network' | 'address' | 'waiting' | 'done'
+type TripleAWaitStepStatus = 'done' | 'active' | 'pending'
 
 export default function ChargeTripleA() {
   const navigate = useNavigate()
@@ -15,16 +16,25 @@ export default function ChargeTripleA() {
   const [selectedNetwork, setSelectedNetwork] = useState('')
   const [confirms, setConfirms] = useState(0)
 
+  const requiredConfirmations = 30
+
   const walletAddress = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
 
   const startWaiting = () => {
     setStep('waiting')
+    setConfirms(0)
     const iv = setInterval(() => {
       setConfirms(c => {
-        if (c >= 3) { clearInterval(iv); setTimeout(() => setStep('done'), 500); return 3 }
-        return c + 1
+        if (c >= requiredConfirmations) return c
+        const next = c + 1
+        if (next >= requiredConfirmations) {
+          clearInterval(iv)
+          setTimeout(() => setStep('done'), 500)
+          return requiredConfirmations
+        }
+        return next
       })
-    }, 1500)
+    }, 400)
   }
 
   if (step === 'coin') return (
@@ -122,18 +132,131 @@ export default function ChargeTripleA() {
   if (step === 'waiting') return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-fade-in">
       <Header title={t('triplea_wait_title')} showBack={false} />
-      <div className="flex-1 flex flex-col items-center justify-center px-8">
-        <div className="relative w-20 h-20 mb-6">
-          <Loader2 size={80} className="text-primary animate-spin" style={{ animationDuration: '2s' }} />
-          <div className="absolute inset-0 flex items-center justify-center"><span className="text-sm font-bold text-primary">{confirms}/3</span></div>
-        </div>
-        <h2 className="text-lg font-bold text-text-dark mb-1">{t('triplea_wait_heading')}</h2>
-        <p className="text-xs text-text-gray text-center mb-6">{t('triplea_wait_desc')}</p>
-        <div className="w-full bg-gray-50 rounded-xl p-4 space-y-2">
-          <div className="flex justify-between text-sm"><span className="text-text-gray">{t('triplea_wait_coin')}</span><span className="text-text-dark font-medium">{selectedCoin} ({selectedNetwork})</span></div>
-          <div className="flex justify-between text-sm"><span className="text-text-gray">{t('triplea_wait_confirm')}</span><span className="text-primary font-medium">{confirms}/3</span></div>
-        </div>
-        <button className="mt-4 flex items-center gap-1 text-sm text-primary"><RefreshCw size={14} /><span>{t('triplea_wait_refresh')}</span></button>
+      <div className="flex-1 px-6 pt-6">
+        {(() => {
+          const depositStatus: TripleAWaitStepStatus =
+            confirms >= requiredConfirmations ? 'done' : 'active'
+
+          const isCompleted = confirms >= requiredConfirmations
+          const exchangeStatus: TripleAWaitStepStatus = isCompleted ? 'done' : 'pending'
+          const completeStatus: TripleAWaitStepStatus = isCompleted ? 'done' : 'pending'
+
+          const wavyUnderlineStyle = {
+            textDecorationLine: 'underline',
+            textDecorationStyle: 'wavy',
+            textDecorationColor: '#dc2626',
+            textUnderlineOffset: '4px',
+          } as const
+
+          const timeline = [
+            {
+              id: 'transfer' as const,
+              title: t('triplea_wait_step_transfer_title'),
+              desc: t('triplea_wait_step_transfer_desc'),
+              status: 'done' as const,
+              markerColor: 'bg-green-600',
+              titleColor: 'text-green-700',
+            },
+            {
+              id: 'network' as const,
+              title: t('triplea_wait_step_network_title'),
+              desc: t('triplea_wait_step_network_desc'),
+              status: 'done' as const,
+              markerColor: 'bg-blue-500',
+              titleColor: 'text-blue-700',
+            },
+            {
+              id: 'deposit' as const,
+              title: t('triplea_wait_step_deposit_title'),
+              status: depositStatus,
+            },
+            {
+              id: 'exchange' as const,
+              title: t('triplea_wait_step_exchange_title'),
+              desc: t('triplea_wait_step_exchange_desc'),
+              status: exchangeStatus,
+              markerColor: 'bg-primary/10',
+              titleColor: 'text-text-gray',
+            },
+            {
+              id: 'complete' as const,
+              title: t('triplea_wait_step_complete_title'),
+              desc: t('triplea_wait_step_complete_desc'),
+              status: completeStatus,
+              markerColor: 'bg-primary/10',
+              titleColor: 'text-text-gray',
+            },
+          ]
+
+          return (
+            <div className="relative pl-8">
+              <div className="absolute left-4 top-2 bottom-2 w-[2px] bg-border" />
+              <div className="space-y-8">
+                {timeline.map(item => {
+                  const isActive = item.id === 'deposit' && item.status === 'active'
+                  const isDepositDone = item.id === 'deposit' && item.status === 'done'
+
+                  let markerClass =
+                    'w-9 h-9 rounded-xl border-2 bg-gray-100 border-border'
+                  if (item.id === 'transfer' || item.id === 'network') {
+                    markerClass = `w-9 h-9 rounded-xl border-2 border-transparent ${item.markerColor}`
+                  } else if (isActive) {
+                    markerClass = 'w-9 h-9 rounded-xl border-2 border-error bg-gray-100 flex items-center justify-center'
+                  } else if (isDepositDone) {
+                    markerClass = 'w-9 h-9 rounded-xl border-2 border-transparent bg-green-600'
+                  } else if (item.status === 'done') {
+                    markerClass = 'w-9 h-9 rounded-xl border-2 border-transparent bg-green-600'
+                  } else {
+                    markerClass = 'w-9 h-9 rounded-xl border-2 bg-gray-100 border-border'
+                  }
+
+                  const titleClass =
+                    item.id === 'transfer'
+                      ? `text-base font-semibold ${item.titleColor}`
+                      : item.id === 'network'
+                        ? `text-base font-semibold ${item.titleColor}`
+                        : 'text-base font-semibold text-text-gray'
+
+                  return (
+                    <div key={item.id} className="flex gap-4">
+                      <div className="w-8 flex justify-center pt-0.5">
+                        <div className={markerClass}>
+                          {isActive ? (
+                            <Loader2
+                              size={18}
+                              className="text-error animate-spin"
+                              style={{ animationDuration: '2s' }}
+                            />
+                          ) : null}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <p className={titleClass}>{item.title}</p>
+                        {item.id === 'deposit' ? (
+                          <p className="text-xs text-text-gray leading-relaxed mt-1">
+                            <span className="text-error font-medium" style={wavyUnderlineStyle}>
+                              {t('triplea_wait_step_deposit_check')} ({confirms}/{requiredConfirmations})
+                            </span>
+                          </p>
+                        ) : (
+                          <p className="text-xs text-text-gray leading-relaxed mt-1">{item.desc}</p>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <button
+                className="mt-8 flex items-center justify-center gap-2 text-sm text-primary"
+                onClick={startWaiting}
+              >
+                <RefreshCw size={14} />
+                <span>{t('triplea_wait_refresh')}</span>
+              </button>
+            </div>
+          )
+        })()}
       </div>
     </div>
   )

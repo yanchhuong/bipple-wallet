@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
-import { Loader2, CheckCircle, ExternalLink } from 'lucide-react'
+import { Loader2, ExternalLink } from 'lucide-react'
 
-type Step = 'connect' | 'connecting' | 'select' | 'confirm' | 'processing' | 'done'
+type Step = 'connect' | 'connecting' | 'select' | 'confirm'
 
 const korbitAssets = [
   { symbol: 'BTC', name: 'Bitcoin', balance: 0.042, rate: 82500000 },
@@ -15,13 +15,22 @@ const korbitAssets = [
 
 export default function ChargeKorbit() {
   const navigate = useNavigate()
-  const { korbitConnected, connectKorbit, chargeBippleMoney } = useStore()
+  const { korbitConnected, connectKorbit } = useStore()
   const t = useT()
   const [step, setStep] = useState<Step>(korbitConnected ? 'select' : 'connect')
   const [asset, setAsset] = useState(korbitAssets[0])
   const [qty, setQty] = useState('')
   const numQty = parseFloat(qty || '0')
   const estimatedKrw = Math.floor(numQty * asset.rate)
+
+  useEffect(() => {
+    if (step !== 'connecting') return
+    const timeoutId = window.setTimeout(() => {
+      connectKorbit()
+      setStep('select')
+    }, 2000)
+    return () => window.clearTimeout(timeoutId)
+  }, [connectKorbit, step])
 
   if (step === 'connect') return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
@@ -47,7 +56,6 @@ export default function ChargeKorbit() {
   )
 
   if (step === 'connecting') {
-    setTimeout(() => { connectKorbit(); setStep('select') }, 2000)
     return (
       <div className="flex flex-col h-[calc(100%-44px)] bg-white items-center justify-center">
         <Loader2 size={48} className="text-blue-600 animate-spin mb-4" />
@@ -111,33 +119,18 @@ export default function ChargeKorbit() {
         </div>
       </div>
       <div className="px-6 pb-8 pt-4">
-        <button onClick={() => setStep('processing')} className="w-full py-4 bg-primary text-white font-semibold rounded-xl">{t('korbit_confirm_btn')}</button>
-      </div>
-    </div>
-  )
-
-  if (step === 'processing') {
-    setTimeout(() => { chargeBippleMoney(estimatedKrw); setStep('done') }, 2500)
-    return (
-      <div className="flex flex-col h-[calc(100%-44px)] bg-white items-center justify-center">
-        <Loader2 size={56} className="text-primary animate-spin mb-4" />
-        <p className="text-base font-semibold text-text-dark">{t('korbit_processing')}</p>
-        <p className="text-sm text-text-gray mt-1">{t('korbit_processing_sub')}</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-fade-in">
-      <div className="flex-1 flex flex-col items-center justify-center px-8">
-        <div className="animate-bounce-in"><CheckCircle size={72} className="text-green-500" strokeWidth={1.5} /></div>
-        <h2 className="text-xl font-bold text-text-dark mt-6 mb-1">{t('korbit_done_title')}</h2>
-        <p className="text-3xl font-bold text-primary mt-4">{estimatedKrw.toLocaleString()}{t('won')}</p>
-        <p className="text-sm text-text-gray mt-2">{asset.symbol} {t('korbit_done_desc')}</p>
-      </div>
-      <div className="px-6 pb-8 space-y-2">
-        <button onClick={() => navigate('/home', { replace: true })} className="w-full py-4 bg-primary text-white font-semibold rounded-xl">{t('korbit_done_home')}</button>
-        <button onClick={() => navigate('/history')} className="w-full py-3 text-primary text-sm font-medium">{t('korbit_done_detail')}</button>
+        <button
+          onClick={() => navigate('/charge-korbit-processing', {
+            state: {
+              asset,
+              qty: numQty,
+              estimatedKrw,
+            }
+          })}
+          className="w-full py-4 bg-primary text-white font-semibold rounded-xl"
+        >
+          {t('korbit_confirm_btn')}
+        </button>
       </div>
     </div>
   )

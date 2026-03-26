@@ -10,8 +10,7 @@ export default function ChargeHub() {
   const t = useT()
   const [maintenanceModal, setMaintenanceModal] = useState(false)
 
-  // Simulate: Korbit is under maintenance for demo
-  const korbitMaintenance = true
+  const korbitMaintenance = false
 
   const options = [
     { icon: Landmark, label: t('charge_bank'), desc: t('charge_bank_desc'), path: '/charge-bank', section: t('charge_section_general'), badge: null, maintenance: false },

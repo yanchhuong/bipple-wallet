@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { PhoneFrame } from './components/PhoneFrame'
+import { LaunchScreen } from './components/LaunchScreen'
 import { ToastProvider } from './components/Toast'
 import { AuthGuard } from './components/AuthGuard'
 
@@ -24,6 +25,7 @@ import ChargeBank from './pages/ChargeBank'
 import ChargeCoin from './pages/ChargeCoin'
 import ChargeTripleA from './pages/ChargeTripleA'
 import ChargeKorbit from './pages/ChargeKorbit'
+import KorbitProcessing from './pages/KorbitProcessing'
 import ChargeComplete from './pages/ChargeComplete'
 import PaymentPin from './pages/PaymentPin'
 import PaymentScan from './pages/PaymentScan'
@@ -80,6 +82,7 @@ export default function App() {
           <Route path="/charge-coin" element={<Protected><ChargeCoin /></Protected>} />
           <Route path="/charge-triplea" element={<Protected><ChargeTripleA /></Protected>} />
           <Route path="/charge-korbit" element={<Protected><ChargeKorbit /></Protected>} />
+          <Route path="/charge-korbit-processing" element={<Protected><KorbitProcessing /></Protected>} />
           <Route path="/charge-complete" element={<Protected><ChargeComplete /></Protected>} />
 
           {/* Protected - Payment */}
@@ -107,6 +110,7 @@ export default function App() {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <LaunchScreen />
         <ToastProvider />
       </PhoneFrame>
     </BrowserRouter>
