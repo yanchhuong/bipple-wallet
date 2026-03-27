@@ -234,66 +234,263 @@ pin: string                  // 6-digit transaction PIN
 
 This section documents what a backend team needs to build to replace the current client-side simulation with real APIs.
 
-### API Domains to Implement
+### System Architecture (COOCON Model)
 
-| Domain | Endpoints Needed | Current Simulation |
+```
+┌──────────────┐     ┌──────────────────────┐     ┌────────────┐
+│  Beple Wallet │────▶│  COOCON / BizPlay     │────▶│  Triple-A   │
+│  (Mobile App) │     │  (Server)             │     │ (Singapore) │
+└──────────────┘     │                      │     └────────────┘
+                     │  • KRW settlement     │
+                     │  • Beple Money balance │     ┌────────────┐
+                     │  • Service operation   │────▶│  Korbit     │
+                     │                      │     │ (Korean VASP)│
+                     └──────────────────────┘     └────────────┘
+                              │
+                     ┌────────┴────────┐
+                     │  Korean Banks    │
+                     │  (펌뱅킹/Open    │
+                     │   Banking)       │
+                     └─────────────────┘
+```
+
+| Entity | Role | Crypto Handling |
 |---|---|---|
-| **Auth** | POST /auth/login, POST /auth/signup, POST /auth/otp/send, POST /auth/otp/verify | Phone OTP with auto-fill |
-| **KYC** | POST /kyc/passport, POST /kyc/face, GET /kyc/status, POST /kyc/hikorea-check | Simulated OCR + face matching |
-| **Wallet** | GET /wallet/balance, POST /wallet/charge, POST /wallet/pay, POST /wallet/withdraw | Zustand state with sessionStorage |
-| **Korbit** | POST /korbit/connect (OAuth), GET /korbit/assets, POST /korbit/sell, GET /korbit/status | Simulated OAuth + mock assets |
-| **Crypto** | POST /crypto/address/generate, GET /crypto/deposit/status, GET /crypto/confirmations | Mock address + timer |
-| **Bank** | GET /bank/accounts, POST /bank/register, DELETE /bank/remove, POST /bank/ars-verify | Mock ARS code verification |
-| **Transaction** | GET /transactions, GET /transactions/:id, POST /transactions/refund | In-memory array |
-| **Payment** | POST /payment/qr-scan, POST /payment/confirm, GET /payment/receipt/:id | Simulated QR decode |
-| **ATM** | POST /atm/qr-scan, POST /atm/withdraw, GET /atm/daily-limit | Mock withdrawal |
+| **COOCON (쿠콘/비즈플레이)** | Server operator, KRW settlement, Beple Money balance | ❌ No crypto (KRW only) |
+| **Triple-A** | Deposit address issuance, stablecoin receipt, USDT/USDC → KRW conversion | ✅ On-chain |
+| **Korbit** | OAuth auth, API sell orders, KRW generation via 펌뱅킹 | ✅ Exchange |
+| **Korean Banks** | 펌뱅킹 transfers, ARS verification, account linking | ❌ Fiat only |
 
-### External Integrations
+---
 
-| Service | Integration Type | When Used |
+### Case 1: Direct Transfer Crypto (Triple-A) — Detailed Flow
+
+```
+① App (User)              ② COOCON Server           ③ Triple-A             ④ Blockchain
+│                         │                         │                      │
+│ STEP 1: Balance screen  │                         │                      │
+│ STEP 2: Select Triple-A │                         │                      │
+│         + enter PIN     │                         │                      │
+│ STEP 3: Select coin     │                         │                      │
+│   (USDT/USDC)           │                         │                      │
+│   + network (ERC20/     │                         │                      │
+│     TRC20/Solana)       │                         │                      │
+│                         │ STEP 4: Request address  │                      │
+│                         │ ──────────────────────▶ │                      │
+│                         │                         │ Generate address     │
+│                         │ ◀────────────────────── │ + QR code            │
+│ STEP 5: Show address    │                         │                      │
+│   + QR to user          │                         │                      │
+│                         │                         │                      │
+│   User opens MetaMask ──┼─────────────────────────┼──────────────────▶  │
+│   and sends stablecoin  │                         │                  On-chain
+│                         │                         │                  transfer
+│ STEP 6: Waiting screen  │                         │ ◀──────────────── │
+│   [전송 대기 중]          │                         │ Deposit detected   │
+│                         │ ◀── deposit status ──── │                      │
+│ STEP 7: Progress update │                         │                      │
+│                         │ ◀── KRW settlement ──── │ USDT/USDC → KRW     │
+│                         │     (4-1. KRW 송금)      │ conversion           │
+│ STEP 8: Complete        │                         │                      │
+│   balance updated       │ Update Beple Money      │                      │
+```
+
+**Service Flow (서비스 플로우):**
+1. **충전 요청** — User selects Triple-A → coin (USDT/USDC) + network (ERC20/TRC20)
+2. **입금 주소 발급** — COOCON Server → Triple-A API → disposable address + QR issued
+3. **디지털자산 송금** — User sends from MetaMask/exchange to the address (on-chain)
+4. **환전 및 정산** — Triple-A detects deposit → converts USDT/USDC to KRW → settles to COOCON
+5. **입금 확인 및 비플머니 충전** — COOCON receives KRW → updates Beple Money balance
+
+---
+
+### Case 2: Korbit Charging (Domestic Only) — Detailed Flow
+
+```
+① App (User)              ② COOCON Server           ③ Korbit App           ④ Korbit API
+│                         │                         │                      │
+│ STEP 1: Balance screen  │                         │                      │
+│ STEP 2: Select Korbit   │                         │                      │
+│         + enter PIN     │                         │                      │
+│ STEP 3: Select asset    │                         │                      │
+│  (USDT/USDC/BTC/ETH)   │                         │                      │
+│                         │                         │                      │
+│ STEP 4: [코빗 앱으로    │ ── login request ──────▶│                      │
+│          이동] tap      │                         │ User authenticates   │
+│                         │                         │ (login + 출금 동의)   │
+│                         │ ◀── OAuth token ─────── │                      │
+│                         │     (1st time only)     │ ─── OAuth token ───▶ │
+│                         │                         │                      │
+│ STEP 5: Enter amount    │                         │                      │
+│  (fees + estimate)      │                         │                      │
+│                         │ STEP 6: Sell order ─────┼──────────────────▶  │
+│                         │  (coin, amount params)  │                  ① Receive order
+│                         │                         │                  ② Market sell
+│                         │                         │                  ③ KRW in account
+│                         │                         │                      │
+│ STEP 7: Progress        │ ◀── KRW settlement ────┼────── 펌뱅킹 ──────  │
+│  (status update)        │    (Korbit → COOCON     │    (bank transfer)   │
+│                         │     via 펌뱅킹)          │                      │
+│ STEP 8: Complete        │                         │                      │
+│  balance updated        │ Update Beple Money      │                      │
+```
+
+**Service Flow (서비스 플로우):**
+1. **충전 요청** — User selects Korbit → asset (USDT/USDC/BTC) + amount
+2. **코빗 계정 인증** — Deep link to Korbit app → login + withdrawal consent → OAuth token issued (first time only, skip after)
+3. **시장가 매도 실행** — COOCON calls Korbit API → market sell → KRW generated in Korbit account
+4. **펌뱅킹 이체** — Korbit transfers KRW to COOCON account via 펌뱅킹 (firm banking)
+5. **입금 확인 및 비플머니 충전** — COOCON receives KRW → updates Beple Money balance
+
+**Settlement structure:** Korbit API sell → Korbit KRW created → 펌뱅킹 transfer → COOCON receives → Beple Money updated
+
+---
+
+### API Endpoints
+
+#### Auth & Phone Verification
+| Method | Endpoint | Description |
 |---|---|---|
-| **Korbit** | REST API (HMAC-SHA256 auth) | Domestic charging — asset sell + KRW withdrawal |
-| **Triple-A** | REST API + Webhooks | Direct Transfer Crypto — deposit address + confirmation |
-| **Korean Banks** | Open Banking API | Bank account linking + ARS verification + transfers |
-| **HiKorea** | Government API | Foreigner residence status verification during KYC |
+| POST | `/api/auth/otp/send` | Send OTP to phone number |
+| POST | `/api/auth/otp/verify` | Verify OTP code |
+| POST | `/api/auth/login` | Login with phone + PIN |
+| POST | `/api/auth/signup` | Register new user (phone, name, residenceId) |
+| POST | `/api/auth/pin/set` | Set/reset 6-digit PIN |
+| POST | `/api/auth/pin/verify` | Verify PIN for transactions |
+| GET | `/api/auth/session` | Get current session info |
 
-### Korbit API Details
+#### KYC (Passport — Foreigner Only)
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/kyc/passport/ocr` | Upload passport image → OCR extract data |
+| POST | `/api/kyc/passport/confirm` | Confirm/edit extracted passport data |
+| POST | `/api/kyc/face/verify` | Upload face image → liveness + matching |
+| POST | `/api/kyc/hikorea/check` | Verify residence status via HiKorea |
+| GET | `/api/kyc/status` | Get KYC verification status |
+
+#### Wallet
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/wallet/balance` | Get Beple Money balance |
+| GET | `/api/wallet/transactions` | List transactions (filters: type, period, status) |
+| GET | `/api/wallet/transactions/:id` | Get transaction detail / receipt |
+
+#### Direct Transfer Crypto (Triple-A Integration)
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/charge/crypto/address` | Request deposit address (coin + network) → calls Triple-A API |
+| GET | `/api/charge/crypto/status/:id` | Check deposit status + confirmations |
+| POST | `/api/charge/crypto/confirm` | Confirm charge after Triple-A KRW settlement |
+| Webhook | `/webhook/triplea/deposit` | Triple-A notifies deposit detected |
+| Webhook | `/webhook/triplea/settlement` | Triple-A notifies KRW settlement complete |
+
+#### Korbit (Domestic Charging)
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/korbit/auth/init` | Start Korbit OAuth (generate deep link) |
+| POST | `/api/korbit/auth/callback` | Receive OAuth token from Korbit app |
+| GET | `/api/korbit/connected` | Check if Korbit is connected |
+| GET | `/api/korbit/assets` | Fetch user's Korbit holdings via API |
+| POST | `/api/korbit/sell` | Place market sell order via Korbit API |
+| GET | `/api/korbit/sell/:id/status` | Check sell order + 펌뱅킹 transfer status |
+| Webhook | `/webhook/korbit/settlement` | Korbit notifies 펌뱅킹 KRW transfer complete |
+
+#### Bank Account (Domestic Only)
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/bank/accounts` | List linked bank accounts |
+| POST | `/api/bank/register` | Start bank registration (bank, account#, holder) |
+| POST | `/api/bank/ars/request` | Request ARS phone verification |
+| POST | `/api/bank/ars/verify` | Verify ARS code |
+| DELETE | `/api/bank/accounts/:id` | Remove linked bank account |
+| PATCH | `/api/bank/accounts/:id/default` | Set as default account |
+| POST | `/api/bank/charge` | Charge from bank account (Open Banking transfer) |
+
+#### Payment & ATM
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/payment/qr/decode` | Decode merchant QR → return merchant + amount |
+| POST | `/api/payment/confirm` | Confirm payment (deduct balance) |
+| GET | `/api/payment/receipt/:id` | Get payment receipt |
+| POST | `/api/atm/qr/decode` | Decode ATM QR code |
+| POST | `/api/atm/withdraw` | Process ATM withdrawal (amount + 1,300 fee) |
+| GET | `/api/atm/daily-limit` | Check remaining daily ATM limit |
+
+---
+
+### External Integration Details
+
+#### Triple-A API (Direct Transfer Crypto)
+- **Provider:** Triple-A Pte. Ltd. (Singapore)
+- **Role:** Deposit address issuance, stablecoin receipt, USDT/USDC → KRW conversion & settlement
+- **Integration:** REST API + Webhooks for deposit/settlement notifications
+- **Supported coins:** USDT, USDC
+- **Supported networks:** ERC-20, TRC-20, Solana
+- **Address validity:** 30 minutes (disposable)
+
+#### Korbit API (Domestic Exchange)
+- **Provider:** Korea Bitcoin Exchange Co., Ltd.
 - **Base URL:** `https://api.korbit.co.kr`
-- **Auth:** API Key + HMAC-SHA256 signature per request
-- **Key endpoints:** `/v2/tickers` (prices), `/v2/balance` (assets), `/v2/orders` (sell), `/v2/krw/withdraw` (KRW out)
+- **Auth:** API Key + HMAC-SHA256 signature (OAuth token from first-time app auth)
+- **Key endpoints:** `/v2/tickers`, `/v2/balance`, `/v2/orders`, `/v2/krw/withdraw`
 - **Rate limits:** 50 req/s public, 30 req/s orders
-- **First-time OAuth** requires Korbit app; subsequent calls are API-only
+- **Settlement:** 펌뱅킹 (firm banking) transfer to COOCON account
+- **First-time:** Korbit app OAuth required; subsequent = API-only
 
-### State Machines for Backend
+#### Korean Banks (Open Banking)
+- **Used for:** Account linking, ARS verification, direct bank charging
+- **ARS:** Phone-based real-name verification (2-digit code)
+- **펌뱅킹:** Firm banking for Korbit → COOCON KRW transfers
+
+#### HiKorea (Government)
+- **Used for:** Foreigner residence status verification during passport KYC
+- **Checks:** Registration status, stay period, entry status
+
+---
+
+### State Machines
 
 ```
-KYC Status:    pending → scanning → verified | failed → retry
-Charge Status: initiated → processing → completed | failed
-Payment:       scanned → pin_verified → confirmed → settled
-ATM:           scanned → amount_set → pin_verified → dispensing → completed
-Korbit Sell:   order_placed → filled → krw_withdrawn → wallet_charged
+Phone OTP:     idle → sent → verified | expired
+KYC (Passport): pending → ocr_scanning → data_confirmed → face_verified → hikorea_checked → completed | failed
+Korbit OAuth:  disconnected → app_launched → authenticated → token_stored → connected
+Korbit Sell:   order_placed → filled → krw_in_korbit → 펌뱅킹_transfer → coocon_received → wallet_charged
+Triple-A:      address_generated → waiting_deposit → deposit_detected → confirming → settled → wallet_charged
+Bank Charge:   initiated → ars_verified → transfer_requested → completed | failed
+Payment:       qr_scanned → pin_verified → confirmed → settled
+ATM:           qr_scanned → amount_set → pin_verified → dispensing → completed
 ```
+
+---
 
 ### Database Entities
 
 | Entity | Key Fields |
 |---|---|
-| User | id, phone, name, residenceId, userType, kycStatus, pinHash |
-| Wallet | userId, balance, currency |
-| BankAccount | userId, bankName, accountNumber, holderName, isDefault |
-| KorbitConnection | userId, apiKey, apiSecret, connectedAt |
-| Transaction | id, userId, type, amount, balance, status, createdAt |
-| KYCRecord | userId, passportNo, nationality, faceScore, hikoreaStatus |
-| CryptoDeposit | userId, coin, network, address, amount, confirmations, status |
+| **User** | id, phone, name, residenceId, userType (domestic/foreigner), kycStatus, pinHash, carrier |
+| **Wallet** | userId, balance (KRW), currency, updatedAt |
+| **BankAccount** | userId, bankName, accountNumber, holderName, isDefault, arsVerified |
+| **KorbitConnection** | userId, oauthToken, tokenExpiry, connectedAt, lastUsedAt |
+| **Transaction** | id, userId, type (charge/payment/atm/fee), amount, balance, status, method, createdAt |
+| **KYCRecord** | userId, passportNo, nationality, surname, givenName, birthDate, faceScore, hikoreaStatus |
+| **CryptoDeposit** | id, userId, coin, network, depositAddress, amount, confirmations, tripleaRef, status |
+| **KorbitSellOrder** | id, userId, asset, quantity, rate, krwAmount, korbitOrderId, settlementStatus |
+| **PaymentRecord** | id, txId, merchantId, merchantName, qrData, approvalNo |
+| **ATMWithdrawal** | id, txId, atmId, amount, fee (1300), dailyTotal |
 
-### Key Business Rules for Backend
-1. **Foreigner users** can ONLY charge via Direct Transfer Crypto — reject Bank/Korbit API calls
-2. **Korbit OAuth** is one-time — store API keys after first auth, never require app again
-3. **ATM fee** (1,300 KRW) must be logged as separate transaction
-4. **PIN** should be hashed server-side (never stored in plaintext)
-5. **Transaction IDs** must be globally unique (UUID v4)
-6. **Double-charge prevention** — use idempotency keys on all charge/pay endpoints
-7. **Session** should use JWT with short expiry + refresh tokens
+---
+
+### Key Business Rules
+1. **Foreigner (passport KYC)** → ONLY Direct Transfer Crypto. Reject Bank/Korbit API calls
+2. **Domestic (phone OTP)** → Bank Account + Korbit + Direct Transfer Crypto all available
+3. **Korbit OAuth** is one-time — store token, never require app again
+4. **COOCON does NOT hold crypto** — only processes KRW settlement
+5. **Triple-A handles all crypto** — address generation, on-chain receipt, conversion
+6. **ATM fee** (1,300 KRW) logged as separate transaction record
+7. **PIN** hashed server-side (bcrypt), never stored in plaintext
+8. **Transaction IDs** globally unique (UUID v4) with idempotency keys
+9. **Session** — JWT with short expiry + refresh tokens
+10. **펌뱅킹** — Korbit → COOCON KRW transfer via firm banking, not user-initiated
 
 ---
 
