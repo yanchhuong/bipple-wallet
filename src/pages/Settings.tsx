@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { BottomNav } from '../components/BottomNav'
-import { ChevronRight, CreditCard, Coins, Lock, FileText, Info, LogOut, Globe, Bell, ScanFace, ShieldCheck, ShieldX, Palette } from 'lucide-react'
+import { ChevronRight, CreditCard, Lock, FileText, Info, LogOut, Globe, Bell, ScanFace, ShieldCheck, ShieldX, Palette } from 'lucide-react'
 import { Modal } from '../components/Modal'
 import { toast } from '../components/Toast'
 
@@ -140,22 +140,14 @@ export default function Settings() {
           </button>
         </div>
 
-        {/* Account & Coin Management */}
+        {/* Account Management */}
         <p className="text-[10px] font-semibold text-text-light uppercase tracking-wider mb-2 px-1">{t('settings_about')}</p>
         <div className="bg-white rounded-2xl overflow-hidden mb-4">
-          <button onClick={() => navigate('/settings/account')} className="w-full flex items-center gap-3 px-4 py-4 active:bg-gray-50 border-b border-border">
+          <button onClick={() => navigate('/settings/account')} className="w-full flex items-center gap-3 px-4 py-4 active:bg-gray-50">
             <div className="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center"><CreditCard size={18} className="text-green-600" /></div>
             <div className="flex-1 text-left">
               <p className="text-sm font-medium text-text-dark">{t('settings_account')}</p>
               <p className="text-[10px] text-text-light mt-0.5">{t('settings_account_desc')}</p>
-            </div>
-            <ChevronRight size={16} className="text-text-light" />
-          </button>
-          <button onClick={() => navigate('/settings/coins')} className="w-full flex items-center gap-3 px-4 py-4 active:bg-gray-50">
-            <div className="w-9 h-9 rounded-xl bg-yellow-50 flex items-center justify-center"><Coins size={18} className="text-yellow-600" /></div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-text-dark">{t('settings_coins')}</p>
-              <p className="text-[10px] text-text-light mt-0.5">{t('settings_coins_desc')}</p>
             </div>
             <ChevronRight size={16} className="text-text-light" />
           </button>
@@ -185,7 +177,7 @@ export default function Settings() {
         <p className="text-sm text-text-gray text-center mb-6">{t('settings_logout_confirm')}</p>
         <div className="flex gap-3">
           <button onClick={() => setLogoutModal(false)} className="flex-1 py-3 bg-gray-100 text-text-gray font-medium rounded-xl">{t('cancel')}</button>
-          <button onClick={() => { logout(); localStorage.removeItem('bipple-wallet-storage'); sessionStorage.removeItem('bp-session'); window.location.href = '/' }} className="flex-1 py-3 bg-error text-white font-medium rounded-xl">{t('settings_logout')}</button>
+          <button onClick={() => { logout(); sessionStorage.removeItem('bipple-wallet-storage'); sessionStorage.removeItem('bp-session'); window.location.href = '/' }} className="flex-1 py-3 bg-error text-white font-medium rounded-xl">{t('settings_logout')}</button>
         </div>
       </Modal>
 

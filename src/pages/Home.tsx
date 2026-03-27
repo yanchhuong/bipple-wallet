@@ -1,35 +1,18 @@
-import { useMemo } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 import { AppLogo } from '../components/AppLogo'
 import { BottomNav } from '../components/BottomNav'
-import { Bell, CreditCard, QrCode, Landmark, ChevronRight, TrendingUp, BarChart3, Plus } from 'lucide-react'
-
-const sourceStyle: Record<string, { icon: typeof BarChart3; gradient: string; iconBg: string }> = {
-  'Korbit': { icon: BarChart3, gradient: 'from-[#0052FF] to-blue-700', iconBg: 'bg-[#0052FF]' },
-}
+import { Bell, CreditCard, QrCode, Landmark, TrendingUp, BarChart3, Plus } from 'lucide-react'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { bippleMoney, coins, notifications, bankAccounts } = useStore()
+  const { bippleMoney, notifications, bankAccounts, korbitConnected } = useStore()
   const t = useT()
   const unread = notifications.filter(n => !n.read).length
-  const totalCoinValue = coins.filter(c => c.source !== 'Triple-A').reduce((sum, c) => sum + c.krwValue, 0)
 
-  // Group coins by source (Korbit only — Triple-A not shown on home)
-  const wallets = useMemo(() => {
-    const map: Record<string, { source: string; coins: typeof coins; totalKrw: number }> = {}
-    for (const coin of coins) {
-      if (coin.source === 'Triple-A') continue
-      if (!map[coin.source]) map[coin.source] = { source: coin.source, coins: [], totalKrw: 0 }
-      map[coin.source].coins.push(coin)
-      map[coin.source].totalKrw += coin.krwValue
-    }
-    return Object.values(map)
-  }, [coins])
-
-  const isNewUser = bankAccounts.length === 0 && wallets.length === 0
+  const isNewUser = bankAccounts.length === 0 && !korbitConnected
 
   return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-bg-gray">
@@ -70,103 +53,42 @@ export default function Home() {
           </div>
         </div>
 
-        {/* New user setup cards OR Wallets */}
-        <div className="mx-4 mt-4">
-          {bankAccounts.length === 0 && wallets.length === 0 ? (
-            <div className="space-y-3">
-              {/* Set Up Bank Account */}
-              <button onClick={() => navigate('/settings/account')}
-                className="w-full bg-white rounded-2xl p-5 active:bg-gray-50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Landmark size={24} className="text-primary" />
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="text-sm font-semibold text-text-dark">{t('home_setup_bank')}</p>
-                    <p className="text-xs text-text-gray mt-0.5">{t('home_setup_bank_desc')}</p>
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Plus size={16} className="text-primary" />
-                  </div>
+        {/* Setup cards for new users */}
+        {isNewUser && (
+          <div className="mx-4 mt-4 space-y-3">
+            <button onClick={() => navigate('/settings/account')}
+              className="w-full bg-white rounded-2xl p-5 active:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Landmark size={24} className="text-primary" />
                 </div>
-              </button>
-
-              {/* Set Up Korbit */}
-              <button onClick={() => navigate('/charge-korbit')}
-                className="w-full bg-white rounded-2xl p-5 active:bg-gray-50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#0052FF]/10 flex items-center justify-center">
-                    <BarChart3 size={24} className="text-[#0052FF]" />
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="text-sm font-semibold text-text-dark">{t('home_setup_korbit')}</p>
-                    <p className="text-xs text-text-gray mt-0.5">{t('home_setup_korbit_desc')}</p>
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-[#0052FF]/10 flex items-center justify-center">
-                    <Plus size={16} className="text-[#0052FF]" />
-                  </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-semibold text-text-dark">{t('home_setup_bank')}</p>
+                  <p className="text-xs text-text-gray mt-0.5">{t('home_setup_bank_desc')}</p>
                 </div>
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-text-dark">{t('home_coins')}</h3>
-                <span className="text-xs text-text-gray">≈ {totalCoinValue.toLocaleString()}{t('won')}</span>
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Plus size={16} className="text-primary" />
+                </div>
               </div>
+            </button>
 
-              {wallets.length === 0 ? (
-                <div className="bg-white rounded-2xl p-8 text-center">
-                  <p className="text-4xl mb-3">🪙</p>
-                  <p className="text-sm text-text-gray">{t('home_no_coins')}</p>
-                  <p className="text-xs text-text-light mt-1">{t('home_no_coins_desc')}</p>
+            <button onClick={() => navigate('/charge-korbit')}
+              className="w-full bg-white rounded-2xl p-5 active:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-[#0052FF]/10 flex items-center justify-center">
+                  <BarChart3 size={24} className="text-[#0052FF]" />
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {wallets.map(wallet => {
-                    const style = sourceStyle[wallet.source] || sourceStyle['Korbit']
-                    const Icon = style.icon
-                    return (
-                      <div key={wallet.source} className="bg-white rounded-2xl overflow-hidden">
-                        <div className={`bg-gradient-to-r ${style.gradient} p-4 flex items-center gap-3`}>
-                          <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                            {wallet.source === 'Korbit' ? (
-                              <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                                <path d="M6 6h4.5v12H6V6z" fill="white"/>
-                                <path d="M12 6l6 6-6 6V6z" fill="white"/>
-                              </svg>
-                            ) : (
-                              <Icon size={20} className="text-white" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-white font-bold text-sm">{wallet.source}</p>
-                            <p className="text-white/70 text-xs">{wallet.coins.length} {t('asset_count')}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-white font-bold">≈ {wallet.totalKrw.toLocaleString()}</p>
-                            <p className="text-white/60 text-[10px]">{t('won')}</p>
-                          </div>
-                        </div>
-                        {wallet.coins.map((coin, i) => (
-                          <button key={coin.id} onClick={() => navigate(`/coin/${coin.id}`)}
-                            className={`w-full flex items-center px-4 py-3 active:bg-gray-50 ${i < wallet.coins.length - 1 ? 'border-b border-border' : ''}`}>
-                            <div className="flex-1 text-left">
-                              <p className="text-sm font-medium text-text-dark">{coin.name}</p>
-                              <p className="text-[10px] text-text-gray mt-0.5">{coin.balance.toFixed(coin.symbol === 'BTC' ? 4 : 2)} {coin.symbol}</p>
-                            </div>
-                            <p className="text-sm font-medium text-text-dark mr-2">≈ {coin.krwValue.toLocaleString()}{t('won')}</p>
-                            <ChevronRight size={14} className="text-text-light" />
-                          </button>
-                        ))}
-                      </div>
-                    )
-                  })}
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-semibold text-text-dark">{t('home_setup_korbit')}</p>
+                  <p className="text-xs text-text-gray mt-0.5">{t('home_setup_korbit_desc')}</p>
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                <div className="w-8 h-8 rounded-full bg-[#0052FF]/10 flex items-center justify-center">
+                  <Plus size={16} className="text-[#0052FF]" />
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
 
         {/* Event Banners - stacked */}
         <div className="mx-4 mt-4 space-y-2">

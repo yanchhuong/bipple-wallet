@@ -48,7 +48,7 @@ export default function ChargeTripleA() {
   const navigate = useNavigate()
   const { chargeBippleMoney } = useStore()
   const t = useT()
-  const [step, setStep] = useState<Step>(localStorage.getItem('dtc-guide-skip') ? 'step1' : 'guide')
+  const [step, setStep] = useState<Step>(sessionStorage.getItem('dtc-guide-skip') ? 'step1' : 'guide')
   const [selectedCoin, setSelectedCoin] = useState('')
   const [selectedNetwork, setSelectedNetwork] = useState('')
   const [confirms, setConfirms] = useState(0)
@@ -165,8 +165,8 @@ export default function ChargeTripleA() {
       <div className="px-6 pt-2">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" onChange={(e) => {
-            if (e.target.checked) localStorage.setItem('dtc-guide-skip', '1')
-            else localStorage.removeItem('dtc-guide-skip')
+            if (e.target.checked) sessionStorage.setItem('dtc-guide-skip', '1')
+            else sessionStorage.removeItem('dtc-guide-skip')
           }} className="w-4 h-4 rounded border-border text-primary accent-primary" />
           <span className="text-xs text-text-gray">{t('dtc_guide_skip')}</span>
         </label>

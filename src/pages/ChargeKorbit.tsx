@@ -3,19 +3,21 @@ import { useNavigate } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Loader2, CheckCircle, Smartphone, Shield, Key } from 'lucide-react'
+import { MOCK_RATES } from '../constants'
 
-type Step = 'connect' | 'select' | 'confirm'
+type Step = 'connect' | 'guide' | 'authenticating' | 'connected' | 'select' | 'confirm'
 
+// Korbit assets fetched via API after OAuth (simulated)
 const korbitAssets = [
-  { symbol: 'BTC', name: 'Bitcoin', balance: 0.042, rate: 82500000 },
-  { symbol: 'ETH', name: 'Ethereum', balance: 1.52, rate: 2400000 },
-  { symbol: 'XRP', name: 'Ripple', balance: 5000, rate: 680 },
+  { symbol: 'BTC', name: 'Bitcoin', balance: 0.042, rate: MOCK_RATES.BTC },
+  { symbol: 'ETH', name: 'Ethereum', balance: 1.52, rate: MOCK_RATES.ETH },
+  { symbol: 'XRP', name: 'Ripple', balance: 5000, rate: MOCK_RATES.XRP },
 ]
 
 export default function ChargeKorbit() {
   const navigate = useNavigate()
-  const { korbitConnected } = useStore()
+  const { korbitConnected, connectKorbit } = useStore()
   const t = useT()
   const [step, setStep] = useState<Step>(korbitConnected ? 'select' : 'connect')
   const [asset, setAsset] = useState(korbitAssets[0])
@@ -23,29 +25,136 @@ export default function ChargeKorbit() {
   const numQty = parseFloat(qty || '0')
   const estimatedKrw = Math.floor(numQty * asset.rate)
 
+  const handleStartAuth = () => {
+    setStep('guide')
+  }
+
+  const handleOpenKorbitApp = () => {
+    setStep('authenticating')
+    // Simulate: Korbit app OAuth (first-time only, 3s)
+    setTimeout(() => {
+      connectKorbit()
+      setStep('connected')
+    }, 3000)
+  }
+
+  // ===== Step: Connect (intro) =====
   if (step === 'connect') return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
       <Header title={t('korbit_connect_title')} />
-      <div className="flex-1 px-6 pt-6">
-        <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-2xl bg-blue-600 flex items-center justify-center"><span className="text-white text-2xl font-bold">K</span></div>
+      <div className="flex-1 flex flex-col items-center justify-center px-6">
+        <div className="w-20 h-20 rounded-2xl bg-[#0052FF] flex items-center justify-center mb-6 shadow-lg shadow-[#0052FF]/20">
+          <svg viewBox="0 0 24 24" width="36" height="36" fill="none">
+            <path d="M6 6h4.5v12H6V6z" fill="white"/><path d="M12 6l6 6-6 6V6z" fill="white"/>
+          </svg>
         </div>
         <h2 className="text-center text-lg font-bold text-text-dark mb-2">{t('korbit_connect_heading')}</h2>
         <p className="text-center text-sm text-text-gray mb-6 whitespace-pre-line">{t('korbit_connect_desc')}</p>
-        <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-xs text-text-gray">
+        <div className="w-full bg-gray-50 rounded-xl p-4 space-y-2 text-xs text-text-gray">
           <p>• {t('korbit_connect_note1')}</p>
           <p>• {t('korbit_connect_note2')}</p>
           <p>• {t('korbit_connect_note3')}</p>
         </div>
       </div>
       <div className="px-6 pb-8 pt-4">
-        <button onClick={() => navigate('/settings/coins', { state: { from: 'korbit-charge' } })} className="w-full py-4 bg-blue-600 text-white font-semibold rounded-xl flex items-center justify-center gap-2">
+        <button onClick={handleStartAuth} className="w-full py-4 bg-[#0052FF] text-white font-semibold rounded-xl flex items-center justify-center gap-2 active:bg-[#0040CC]">
           <ExternalLink size={18} />{t('korbit_connect_btn')}
         </button>
       </div>
     </div>
   )
 
+  // ===== Step: Guide (OAuth process explanation) =====
+  if (step === 'guide') return (
+    <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
+      <Header title={t('korbit_connect_title')} onBack={() => setStep('connect')} />
+      <div className="flex-1 px-6 pt-6 overflow-y-auto">
+        <h2 className="text-base font-bold text-text-dark mb-1">{t('korbit_auth_guide_title')}</h2>
+        <p className="text-xs text-text-gray mb-6">{t('korbit_auth_guide_desc')}</p>
+
+        {/* OAuth steps */}
+        <div className="space-y-4">
+          <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-2xl">
+            <div className="w-10 h-10 rounded-xl bg-[#0052FF]/10 flex items-center justify-center flex-shrink-0">
+              <Smartphone size={20} className="text-[#0052FF]" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-text-dark">{t('korbit_auth_step1')}</p>
+              <p className="text-xs text-text-gray mt-0.5">{t('korbit_auth_step1_desc')}</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 p-4 bg-green-50 rounded-2xl">
+            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+              <Shield size={20} className="text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-text-dark">{t('korbit_auth_step2')}</p>
+              <p className="text-xs text-text-gray mt-0.5">{t('korbit_auth_step2_desc')}</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 p-4 bg-amber-50 rounded-2xl">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+              <Key size={20} className="text-amber-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-text-dark">{t('korbit_auth_step3')}</p>
+              <p className="text-xs text-text-gray mt-0.5">{t('korbit_auth_step3_desc')}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 bg-gray-50 rounded-xl p-3">
+          <p className="text-[10px] text-text-gray">{t('korbit_auth_note')}</p>
+        </div>
+      </div>
+      <div className="px-6 pb-8 pt-4">
+        <button onClick={handleOpenKorbitApp}
+          className="w-full py-4 bg-[#0052FF] text-white font-semibold rounded-xl flex items-center justify-center gap-2 active:bg-[#0040CC]">
+          <Smartphone size={18} />
+          {t('korbit_auth_open_app')}
+        </button>
+      </div>
+    </div>
+  )
+
+  // ===== Step: Authenticating (simulating Korbit app OAuth) =====
+  if (step === 'authenticating') return (
+    <div className="flex flex-col h-[calc(100%-44px)] bg-white items-center justify-center animate-fade-in">
+      <div className="w-20 h-20 rounded-2xl bg-[#0052FF]/10 flex items-center justify-center mb-6">
+        <Loader2 size={36} className="text-[#0052FF] animate-spin" />
+      </div>
+      <p className="text-base font-semibold text-text-dark">{t('korbit_connecting')}</p>
+      <p className="text-xs text-text-gray mt-1">{t('korbit_connecting_sub')}</p>
+      <p className="text-[10px] text-text-light mt-4">{t('korbit_auth_waiting')}</p>
+    </div>
+  )
+
+  // ===== Step: Connected success (first time only) =====
+  if (step === 'connected') return (
+    <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-fade-in">
+      <div className="flex-1 flex flex-col items-center justify-center px-8">
+        <div className="animate-bounce-in">
+          <CheckCircle size={64} className="text-green-500" />
+        </div>
+        <p className="text-lg font-bold text-text-dark mt-4">{t('korbit_auth_success')}</p>
+        <p className="text-sm text-text-gray mt-1">{t('korbit_auth_success_desc')}</p>
+        <div className="mt-4 bg-[#0052FF]/5 rounded-xl p-4 w-full flex items-center gap-3">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M6 6h4.5v12H6V6z" fill="#0052FF"/><path d="M12 6l6 6-6 6V6z" fill="#0052FF"/>
+          </svg>
+          <p className="text-sm font-semibold text-text-dark">Korbit</p>
+          <span className="text-[10px] font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full ml-auto">{t('otp_verified')}</span>
+        </div>
+      </div>
+      <div className="px-6 pb-8">
+        <button onClick={() => setStep('select')} className="w-full py-4 bg-primary text-white font-semibold rounded-xl">{t('next')}</button>
+      </div>
+    </div>
+  )
+
+  // ===== Step: Select asset to sell (via Korbit API) =====
   if (step === 'select') return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
       <Header title={t('korbit_select_title')} />
@@ -84,7 +193,8 @@ export default function ChargeKorbit() {
     </div>
   )
 
-  if (step === 'confirm') return (
+  // ===== Step: Confirm sell =====
+  return (
     <div className="flex flex-col h-[calc(100%-44px)] bg-white animate-slide-in">
       <Header title={t('korbit_confirm_title')} onBack={() => setStep('select')} />
       <div className="flex-1 px-6 pt-6">
@@ -101,13 +211,7 @@ export default function ChargeKorbit() {
       </div>
       <div className="px-6 pb-8 pt-4">
         <button
-          onClick={() => navigate('/charge-korbit-processing', {
-            state: {
-              asset,
-              qty: numQty,
-              estimatedKrw,
-            }
-          })}
+          onClick={() => navigate('/charge-korbit-processing', { state: { asset, qty: numQty, estimatedKrw } })}
           className="w-full py-4 bg-primary text-white font-semibold rounded-xl"
         >
           {t('korbit_confirm_btn')}

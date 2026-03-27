@@ -280,10 +280,21 @@ export const useStore = create<AppState>()(
     {
       name: 'bipple-wallet-storage',
       version: 1,
+      // Use sessionStorage: each browser tab gets its own isolated state.
+      // New tab = fresh onboarding. Closing tab = data wiped.
+      // Refresh in same tab = state preserved.
+      storage: {
+        getItem: (name) => {
+          const v = sessionStorage.getItem(name)
+          return v ? JSON.parse(v) : null
+        },
+        setItem: (name, value) => sessionStorage.setItem(name, JSON.stringify(value)),
+        removeItem: (name) => sessionStorage.removeItem(name),
+      },
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(([, v]) => typeof v !== 'function')
-        ),
+        ) as unknown as AppState,
       merge: (persistedState, currentState) => ({
         ...currentState,
         ...(persistedState as object),

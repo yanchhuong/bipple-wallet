@@ -49,8 +49,8 @@ export default function OnboardingBank() {
   }
 
   const handleKorbitConnect = () => {
-    // Navigate to full Coin Management (Wallet Connect) flow
-    navigate('/settings/coins', { state: { from: 'onboarding' } })
+    // Navigate to Korbit OAuth flow (first-time authentication)
+    navigate('/charge-korbit')
   }
 
   // === Type Select (Bank Account or Korbit) ===
