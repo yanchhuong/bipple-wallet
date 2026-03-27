@@ -176,10 +176,11 @@ export function LaunchScreen() {
         />
       ))}
 
-      <div className="absolute inset-0 flex flex-col px-6 overflow-y-auto">
+      <div className="absolute inset-0 flex flex-col justify-end px-6 overflow-y-auto"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}>
         {/* Logo + Branding */}
-        <div className="flex-1 flex items-end pb-8">
-          <div className="w-full max-w-[360px]">
+        <div className="flex-1 flex items-end pb-6">
+          <div className="w-full">
             <div
               className="select-none"
               style={{
@@ -187,19 +188,19 @@ export function LaunchScreen() {
                 transition: reducedMotion ? undefined : 'transform 0.2s ease-out',
               }}
             >
-              <div className="inline-flex rounded-[22px] bg-white p-3.5 shadow-lg shadow-black/10">
-                <AppLogo size={84} />
+              <div className="inline-flex rounded-[18px] bg-white p-3 shadow-lg shadow-black/10">
+                <AppLogo size={72} />
               </div>
             </div>
 
-            <p className="mt-6 text-[26px] font-extrabold leading-[1.25] tracking-[-0.02em] text-white whitespace-pre-line">
+            <p className="mt-5 text-[22px] sm:text-[26px] font-extrabold leading-[1.25] tracking-[-0.02em] text-white">
               비플월렛,{'\n'}스마트한 결제에 자유를 더하다
             </p>
           </div>
         </div>
 
-        {/* Buttons - slide up when phase is 'choose' */}
-        <div className={`pb-20 space-y-3 transition-all duration-500 ${
+        {/* Buttons */}
+        <div className={`pb-6 space-y-3 transition-all duration-500 ${
           phase === 'choose' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'
         }`}>
           <button onClick={handleExistingUser}
@@ -212,6 +213,9 @@ export function LaunchScreen() {
             <UserPlus size={20} />
             <span>{t('launch_new_user')}</span>
           </button>
+
+          {/* Spacer for mobile browser nav bar */}
+          <div className="h-4 sm:h-0" />
         </div>
       </div>
     </div>

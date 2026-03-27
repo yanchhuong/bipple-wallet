@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Signal, Wifi, Battery } from 'lucide-react'
 import { useStore } from '../store/useStore'
 
@@ -22,9 +22,19 @@ function useApplyTheme() {
   }, [theme])
 }
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(window.innerWidth <= 500)
+  useEffect(() => {
+    const fn = () => setMobile(window.innerWidth <= 500)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
+  return mobile
+}
+
 export function StatusBar() {
   return (
-    <div className="flex items-center justify-between px-6 pt-10 pb-1 text-xs font-medium text-text-dark bg-white relative z-50">
+    <div className="phone-status-bar flex items-center justify-between px-6 pt-10 pb-1 text-xs font-medium text-text-dark bg-white relative z-50">
       <span>9:41</span>
       <div className="flex items-center gap-1">
         <Signal size={14} />
@@ -37,13 +47,14 @@ export function StatusBar() {
 
 export function PhoneFrame({ children }: { children: React.ReactNode }) {
   useApplyTheme()
+  const isMobile = useIsMobile()
 
   return (
     <div className="h-full w-full flex items-center justify-center bg-gray-900">
       <div className="phone-frame">
-        <div className="phone-notch" />
+        {!isMobile && <div className="phone-notch" />}
         <div className="screen bg-white relative">
-          <StatusBar />
+          {!isMobile && <StatusBar />}
           {children}
         </div>
       </div>
