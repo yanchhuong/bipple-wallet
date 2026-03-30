@@ -27,17 +27,9 @@ export default function KycFace() {
     setTimeout(() => {
       clearInterval(scoreTimer)
       // Simulate: 20% chance of face match failure
-      const willFail = Math.random() < 0.2
-      if (willFail) {
-        setMatchScore(42)
-        setFailCount(c => c + 1)
-        setState('failed')
-        toast(t('kyc_face_fail_msg'), 'error')
-      } else {
-        setMatchScore(97)
-        setState('done')
-        setTimeout(() => navigate('/kyc-verify'), 800)
-      }
+      setMatchScore(97)
+      setState('done')
+      setTimeout(() => navigate('/kyc-verify'), 800)
     }, 2500)
   }
 

@@ -31,7 +31,7 @@ export default function KycSuccess() {
 
       <div className="px-6 pb-8">
         <button
-          onClick={() => { completeKyc(); navigate('/home') }}
+          onClick={() => { completeKyc(); navigate('/terms') }}
           className="w-full py-4 bg-primary text-white font-semibold rounded-xl active:bg-primary-dark"
         >
           {t('kyc_success_go_home')}

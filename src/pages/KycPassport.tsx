@@ -17,16 +17,8 @@ export default function KycPassport() {
   const handleCapture = () => {
     setState('scanning')
     setTimeout(() => {
-      // Simulate: 30% chance of OCR failure for first 2 attempts
-      const willFail = failCount < 2 && Math.random() < 0.3
-      if (willFail) {
-        const newCount = failCount + 1
-        setFailCount(newCount)
-        setState(newCount >= 3 ? 'retry-loop' : 'failed')
-      } else {
-        setState('captured')
-        setTimeout(() => navigate('/kyc-confirm'), 800)
-      }
+      setState('captured')
+      setTimeout(() => navigate('/kyc-confirm'), 800)
     }, 2500)
   }
 
