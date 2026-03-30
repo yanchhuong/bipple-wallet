@@ -25,8 +25,17 @@ export default function Login() {
   const [otpTimer, setOtpTimer] = useState(0)
   const [phoneVerified, setPhoneVerified] = useState(false)
 
-  const phoneValid = phone.replace(/[^0-9]/g, '').length >= 8
+  const phoneDigits = phone.replace(/[^0-9]/g, '')
+  const phoneValid = phoneDigits.length >= 10
   const nationalId = idFront && idBack ? `${idFront}-${idBack}000000` : ''
+
+  // Format phone: 010-0000-0000
+  const formatPhone = (raw: string) => {
+    const d = raw.replace(/[^0-9]/g, '').slice(0, 11)
+    if (d.length <= 3) return d
+    if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`
+    return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`
+  }
   const canProceed = name.trim().length > 0 && phoneVerified
 
   // Returning user check
@@ -112,11 +121,11 @@ export default function Login() {
           <div className="relative">
             <input
               type="tel"
-              value={phone}
+              value={formatPhone(phone)}
               onChange={e => { setPhone(e.target.value.replace(/[^0-9]/g, '').slice(0, 11)); setPhoneVerified(false) }}
-              placeholder={t('signup_phone_placeholder')}
-              maxLength={11}
-              className="w-full pr-24 py-3.5 border-b-2 border-border text-base text-text-dark focus:border-primary focus:outline-none transition-all"
+              placeholder="010-0000-0000"
+              maxLength={13}
+              className="w-full pr-24 py-3.5 border-b-2 border-border text-base text-text-dark focus:border-primary focus:outline-none transition-all tracking-wide"
             />
             <div className="absolute right-0 top-1/2 -translate-y-1/2">
               {phoneVerified ? (

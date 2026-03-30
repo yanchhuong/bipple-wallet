@@ -1,15 +1,26 @@
 import { Check } from 'lucide-react'
+import { useStore } from '../store/useStore'
 import { useT } from '../hooks/useT'
 
-const steps = [
+// Foreigner (Passport): 3 steps
+const foreignerSteps = [
+  { key: 'profile_basic_info' },
+  { key: 'terms_title' },
+  { label: 'PIN' },
+] as const
+
+// Domestic (Phone): 4 steps
+const domesticSteps = [
   { key: 'profile_basic_info' },
   { key: 'step_bank_setup' },
   { key: 'terms_title' },
   { label: 'PIN' },
 ] as const
 
-export function StepIndicator({ current }: { current: 1 | 2 | 3 | 4 }) {
+export function StepIndicator({ current }: { current: number }) {
   const t = useT()
+  const userType = useStore(s => s.userType)
+  const steps = userType === 'foreigner' ? foreignerSteps : domesticSteps
 
   return (
     <div className="flex items-center gap-1 mb-5">

@@ -23,7 +23,7 @@ const loginIcons: Record<string, string> = {
 
 export default function Terms() {
   const navigate = useNavigate()
-  const { profile, loginMethod } = useStore()
+  const { profile, loginMethod, userType } = useStore()
   const t = useT()
 
   const loginLabel = loginMethod === 'google' ? t('terms_login_google')
@@ -66,7 +66,7 @@ export default function Terms() {
       <Header title={t('terms_title')} showBack={true} />
 
       <div className="flex-1 px-6 pt-4 overflow-y-auto">
-        <StepIndicator current={3} />
+        <StepIndicator current={userType === 'foreigner' ? 2 : 3} />
 
         {/* Login info card */}
         {loginMethod && (

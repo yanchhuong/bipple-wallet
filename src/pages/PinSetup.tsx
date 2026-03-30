@@ -9,7 +9,7 @@ import { useT } from '../hooks/useT'
 export default function PinSetup() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { setPin, pinSet } = useStore()
+  const { setPin, pinSet, userType } = useStore()
   const t = useT()
   const [step, setStep] = useState<'create' | 'confirm'>('create')
   const [firstPin, setFirstPin] = useState('')
@@ -53,7 +53,7 @@ export default function PinSetup() {
       <Header title={t('pin_title')} />
       {isSignupFlow && (
         <div className="px-6 pt-3">
-          <StepIndicator current={4} />
+          <StepIndicator current={userType === 'foreigner' ? 3 : 4} />
         </div>
       )}
       <PinInput

@@ -30,7 +30,6 @@ export default function UserTypeSelect() {
       <Header title={t('usertype_title')} showBack={true} />
 
       <div className="flex-1 px-6 pt-5">
-        <StepIndicator current={4} />
         <h2 className="text-lg font-bold text-text-dark mb-1">{t('usertype_heading')}</h2>
         <p className="text-sm text-text-gray mb-8">{t('usertype_desc')}</p>
 
