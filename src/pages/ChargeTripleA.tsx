@@ -298,11 +298,19 @@ export default function ChargeTripleA() {
         </div>
 
         {/* Address + Copy */}
-        <p className="text-xs text-text-gray mb-2">{t('triplea_addr_address')}</p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs text-text-gray">{t('triplea_addr_address')}</p>
+          {!transferReady && (
+            <div className="flex items-center gap-1 animate-pulse-slow">
+              <span className="text-[10px] text-primary font-semibold bg-primary/10 px-2 py-1 rounded-full">Tap Copy</span>
+              <span className="text-primary">↓</span>
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-2 bg-gray-50 rounded-xl p-3 mb-3">
           <p className="flex-1 text-xs text-text-dark font-mono break-all">{walletAddress}</p>
           <button onClick={handleCopyAndTransfer}
-            className="p-2 bg-white rounded-lg border border-border active:bg-gray-100 flex-shrink-0">
+            className="p-2 bg-white rounded-lg border-2 border-primary active:bg-gray-100 flex-shrink-0 shadow-md shadow-primary/20">
             <Copy size={16} className="text-primary" />
           </button>
         </div>
