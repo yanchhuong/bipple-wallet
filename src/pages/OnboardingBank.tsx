@@ -53,8 +53,8 @@ export default function OnboardingBank() {
   }
 
   const handleKorbitConnect = () => {
-    // Navigate to Korbit OAuth flow (first-time authentication)
-    // After completion, ChargeKorbit's 'connected' step will redirect back
+    // Domestic: phone + Korbit = KYC complete
+    completeKyc()
     navigate('/charge-korbit', { state: { fromOnboarding: true } })
   }
 
