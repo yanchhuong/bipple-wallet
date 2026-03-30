@@ -86,6 +86,8 @@ export default function Login() {
     }, 1000)
   }
 
+  const { setUserType } = useStore()
+
   const handleNext = () => {
     login('phone')
     updateProfile({ name: name.trim(), phone, residenceId: nationalId })
@@ -93,6 +95,7 @@ export default function Login() {
     if (userType === 'domestic') {
       navigate('/onboarding-bank')
     } else {
+      setUserType('foreigner')
       navigate('/kyc-start')
     }
   }
