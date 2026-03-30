@@ -22,7 +22,7 @@ type Step = 'type-select' | 'bank-select' | 'form' | 'terms' | 'ars' | 'verifyin
 
 export default function OnboardingBank() {
   const navigate = useNavigate()
-  const { addBankAccount, bankAccounts, connectKorbit } = useStore()
+  const { addBankAccount, bankAccounts, connectKorbit, completeKyc } = useStore()
   const t = useT()
 
   const [step, setStep] = useState<Step>('type-select')
@@ -33,7 +33,11 @@ export default function OnboardingBank() {
   const [termsChecked, setTermsChecked] = useState(false)
   const [arsCode] = useState(String(Math.floor(Math.random() * 90 + 10)))
 
-  const goNext = () => navigate('/terms')
+  const goNext = () => {
+    // Domestic: phone + bank account = KYC complete
+    completeKyc()
+    navigate('/terms')
+  }
 
   const handleBankComplete = () => {
     const bank = banks.find(b => b.id === selBank)
